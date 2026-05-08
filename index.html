@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dayforce GTM Advisor</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f7f4;--bg3:#f0ede8;
+  --text:#111111;--text2:#555555;--text3:#999999;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);
+  --rad:8px;--radlg:12px;--radxl:16px;
+  --dg:#1b5e20;--dg-bg:#c8e6c9;--dg-text:#0d3b11;
+  --g:#2e7d32;--g-bg:#e8f5e9;--g-text:#1b4d1f;
+  --y:#e65100;--y-bg:#fff3e0;--y-text:#7c3c00;
+  --r:#c62828;--r-bg:#c62828;--r-text:#ffffff;
+  --na-bg:#f0f0f0;--na-text:#aaaaaa;
+  --fam-wfm:#1565c0;--fam-hr:#6a1b9a;--fam-pay:#00695c;
+  --fam-tal:#c62828;--fam-ben:#e65100;--fam-man:#37474f;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+
+/* NAV */
+nav{background:var(--bg);border-bottom:1px solid var(--border2);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:300}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:28px;height:28px;background:#111;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-title{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.nav-badges{display:flex;gap:6px}
+.badge{font-size:10px;font-weight:600;padding:2px 9px;border-radius:99px;border:1px solid;letter-spacing:.02em}
+.badge-geo{background:#e8f5e9;color:#1b5e20;border-color:#66bb6a}
+.badge-mvp{background:#fff3e0;color:#e65100;border-color:#ffb74d}
+
+/* WRAP */
+.wrap{max-width:880px;margin:0 auto;padding:1.5rem 1.25rem 5rem}
+
+/* CARD */
+.card{background:var(--bg);border:1px solid var(--border2);border-radius:var(--radxl);padding:1.5rem;margin-bottom:1rem}
+
+/* FORM */
+.section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);margin-bottom:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fi{display:flex;flex-direction:column;gap:5px}
+.fi.full{grid-column:1/-1}
+.fi label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
+.fi small{font-size:11px;color:var(--text3);min-height:15px;display:block}
+input,select{width:100%;padding:9px 12px;font-size:13px;border:1px solid var(--border2);border-radius:var(--rad);background:var(--bg);color:var(--text);outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{border-color:#1565c0;box-shadow:0 0 0 3px rgba(21,101,192,.1)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23888' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px}
+.divider-row{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin:2px 0}
+.divider-row::before,.divider-row::after{content:'';flex:1;height:1px;background:var(--border2)}
+.divider-row span{font-size:10px;color:var(--text3);white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
+.btn{width:100%;margin-top:8px;padding:11px;background:#111;color:#fff;border:none;border-radius:var(--rad);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.02em;transition:background .15s,transform .1s}
+.btn:hover{background:#333}
+.btn:active{transform:scale(.99)}
+.btn:disabled{background:#ccc;cursor:not-allowed;transform:none}
+
+/* ALERTS */
+.alert{padding:10px 14px;border-radius:var(--rad);font-size:12px;margin-bottom:8px;border-left:3px solid;line-height:1.5}
+.al-warn{background:#fff8e1;color:#7c3c00;border-color:#ffb300}
+.al-geo{background:#f3f4f6;color:#555;border-color:#ccc}
+
+/* RESULT HEADER */
+.result-hero{margin-bottom:1.5rem}
+.result-company{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.result-tags{display:flex;flex-wrap:wrap;gap:6px}
+.result-tag{font-size:11px;font-weight:500;color:var(--text2);background:var(--bg2);border:1px solid var(--border2);padding:3px 10px;border-radius:99px}
+
+/* FAMILY BLOCKS — new design */
+.fam-blocks{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border2);border-radius:var(--radlg);overflow:hidden}
+.fam-block{background:var(--bg)}
+.fam-block:last-child .fam-inner{border-bottom:none}
+.fam-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:background .12s}
+.fam-header:hover{background:var(--bg2)}
+.fam-header.open{border-bottom-color:var(--border2)}
+.fam-color-bar{width:4px;height:24px;border-radius:2px;flex-shrink:0}
+.fam-name{font-size:13px;font-weight:700;flex:1}
+.fam-summary{display:flex;gap:4px;align-items:center}
+.fam-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.fam-dot.dg{background:var(--dg)}
+.fam-dot.g{background:var(--g)}
+.fam-dot.y{background:var(--y)}
+.fam-dot.r{background:var(--r)}
+.fam-dot.na{background:#ccc}
+.fam-count{font-size:10px;font-weight:600;color:var(--text3);min-width:14px}
+.fam-chevron{font-size:10px;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.fam-chevron.open{transform:rotate(180deg)}
+.fam-body{display:none;padding:0 16px 14px}
+.fam-body.open{display:block}
+
+/* MODULE GRID inside each family */
+.mod-grid{display:grid;gap:6px}
+.mod-row{display:flex;align-items:stretch;gap:6px;min-height:40px}
+.mod-chip{flex:1;min-width:0;border-radius:7px;padding:6px 10px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;transition:transform .1s,box-shadow .1s;position:relative}
+.mod-chip:hover{transform:scale(1.02);box-shadow:0 2px 8px rgba(0,0,0,.12);z-index:5}
+.mod-chip.dg{background:var(--dg-bg);border:1.5px solid var(--dg)}
+.mod-chip.g{background:var(--g-bg);border:1px solid #a5d6a7}
+.mod-chip.y{background:#fff3e0;border:1px solid #ffcc80}
+.mod-chip.r{background:var(--r-bg);border:1.5px solid #b71c1c}
+.mod-chip.na{background:var(--na-bg);border:1px solid #e0e0e0;opacity:.7}
+.mod-chip-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.mod-chip.dg .mod-chip-name{color:var(--dg)}
+.mod-chip.g .mod-chip-name{color:var(--g)}
+.mod-chip.y .mod-chip-name{color:#bf360c}
+.mod-chip.r .mod-chip-name{color:#fff}
+.mod-chip.na .mod-chip-name{color:var(--na-text)}
+.mod-chip-val{font-size:11px;font-weight:700}
+.mod-chip.dg .mod-chip-val{color:var(--dg-text)}
+.mod-chip.g .mod-chip-val{color:var(--g-text)}
+.mod-chip.y .mod-chip-val{color:var(--y-text)}
+.mod-chip.r .mod-chip-val{color:#fff}
+.mod-chip.na .mod-chip-val{color:var(--na-text)}
+
+/* TOOLTIP */
+.tip{position:fixed;background:#1a1a1a;color:#f0f0f0;border-radius:10px;padding:10px 14px;font-size:12px;max-width:220px;box-shadow:0 8px 24px rgba(0,0,0,.22);z-index:9999;pointer-events:none;display:none;line-height:1.55}
+.tip-fam{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#888;margin-bottom:2px}
+.tip-mod{font-size:14px;font-weight:700;margin-bottom:5px}
+.tip-status{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;margin-bottom:4px}
+.tip-sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tip-desc{font-size:11px;color:#bbb}
+
+/* LEGEND */
+.legend-row{display:flex;flex-wrap:wrap;gap:8px 20px}
+.leg-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text2)}
+.leg-swatch{width:24px;height:14px;border-radius:3px;flex-shrink:0}
+.leg-swatch.dg{background:var(--dg-bg);border:1.5px solid var(--dg)}
+.leg-swatch.g{background:var(--g-bg);border:1px solid #a5d6a7}
+.leg-swatch.y{background:#fff3e0;border:1px solid #ffcc80}
+.leg-swatch.r{background:var(--r-bg);border:1.5px solid #b71c1c}
+.leg-swatch.na{background:var(--na-bg);border:1px solid #e0e0e0;opacity:.7}
+
+#results{display:none}
+footer{text-align:center;font-size:11px;color:var(--text3);margin-top:2rem}
+@media(max-width:580px){.form-grid{grid-template-columns:1fr}.fi.full{grid-column:1}.nav-badges .badge-geo{display:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white"/>
+        <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" fill-opacity=".5"/>
+        <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" fill-opacity=".5"/>
+        <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white" fill-opacity=".25"/>
+      </svg>
+    </div>
+    <span class="nav-title">Dayforce GTM Advisor</span>
+  </div>
+  <div class="nav-badges">
+    <span class="badge badge-geo">North America</span>
+    <span class="badge badge-mvp">MVP · Mock Data</span>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- FORM -->
+  <div class="card">
+    <div class="section-label">Prospect details</div>
+    <div class="form-grid">
+      <div class="fi full">
+        <label>Company name <span style="font-weight:400;text-transform:none;color:var(--text3)">(optional)</span></label>
+        <input type="text" id="company" placeholder="e.g. Acme Corp"/>
+      </div>
+      <div class="fi">
+        <label>Segment <span style="color:#c62828">*</span></label>
+        <select id="segment">
+          <option value="">Select segment</option>
+          <option value="Large Enterprise">Large Enterprise (&gt; 10,000 EE)</option>
+          <option value="Enterprise">Enterprise (3,501 – 10,000 EE)</option>
+          <option value="Majors">Majors (1,001 – 3,500 EE)</option>
+          <option value="Emerging">Emerging (100 – 1,000 EE)</option>
+          <option value="CA SMB">CA SMB (&lt; 100 EE)</option>
+        </select>
+      </div>
+      <div class="fi">
+        <label>Geography <span style="color:#c62828">*</span></label>
+        <select id="geo">
+          <option value="">Select geography</option>
+          <option value="US">US</option>
+          <option value="Canada">Canada</option>
+          <option value="EMEA">EMEA</option>
+          <option value="APJ">APJ</option>
+        </select>
+      </div>
+      <div class="fi">
+        <label>Primary vertical <span style="color:#c62828">*</span></label>
+        <select id="primary">
+          <option value="">Select vertical</option>
+          <option>Retail</option>
+          <option>Manufacturing</option>
+          <option>Healthcare</option>
+          <option>Public Sector</option>
+          <option>Services</option>
+          <option>Financial Services</option>
+        </select>
+      </div>
+      <div class="fi">
+        <label>Sub-vertical <span style="color:#c62828">*</span></label>
+        <select id="secondary" disabled><option value="">Select primary first</option></select>
+      </div>
+      <div class="divider-row"><span>or look up by NAICS code</span></div>
+      <div class="fi full">
+        <label>NAICS code</label>
+        <input type="text" id="naics" placeholder="e.g. 622, 441, 523, 722" maxlength="10"/>
+        <small id="naics-msg"></small>
+      </div>
+    </div>
+    <button class="btn" id="go-btn" onclick="analyze()" disabled>Generate recommendations →</button>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="card" style="padding:1.1rem 1.5rem">
+    <div class="section-label" style="margin-bottom:10px">Legend — click any family to expand · hover any module for detail</div>
+    <div class="legend-row">
+      <div class="leg-item"><span class="leg-swatch dg"></span>Differentiated — best-in-class advantage</div>
+      <div class="leg-item"><span class="leg-swatch g"></span>Market-appropriate — solid fit</div>
+      <div class="leg-item"><span class="leg-swatch y"></span>With gap — sell with caution</div>
+      <div class="leg-item"><span class="leg-swatch r"></span>Do not sell — not viable</div>
+      <div class="leg-item"><span class="leg-swatch na"></span>Not applicable</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results">
+    <div class="card">
+      <div id="alerts"></div>
+      <div class="result-hero">
+        <div class="result-company" id="r-company"></div>
+        <div class="result-tags" id="r-tags"></div>
+      </div>
+      <div class="fam-blocks" id="fam-blocks"></div>
+      <p style="font-size:11px;color:var(--text3);margin-top:10px;text-align:right">Click a family row to expand · hover any module chip for details</p>
+    </div>
+  </div>
+
+  <footer>Dayforce GTM Advisor · MVP · North America mock data · Internal sales use only</footer>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tip" id="tip">
+  <div class="tip-fam" id="tip-fam"></div>
+  <div class="tip-mod" id="tip-mod"></div>
+  <div class="tip-status"><span class="tip-sdot" id="tip-dot"></span><span id="tip-status"></span></div>
+  <div class="tip-desc" id="tip-desc"></div>
+</div>
+
+<script>
+// ── DATA (from revised spreadsheet) ──────────────────────────────────────────
+const FAMILY_MODULES = {"WFM": ["Budget", "Forecast", "Labor Opt", "Schedule", "Time Entry", "Absence Mgmt", "Mobile Eng", "Frontline Comms", "Task Mgmt"], "HR": ["People Analytics", "Copilot", "Doc Mgmt", "Knowledge Mgmt"], "Payroll": ["ACA", "Payroll", "Pension Auto"], "Talent": ["Recruiting", "Succession", "Compensation", "Onboarding", "Performance", "Learning", "Engagement", "Career Explorer"], "Benefits": ["Benefits", "Benefits Billing", "Benefits Intel"], "Managed": ["Mgd Garnishments", "CC - Pay", "CC - Benefits", "CC - Garnishments"]};
+
+const DATA = {"WFM": {"Retail": {"Big Box / Grocery": {"Budget": {"v": "D/F", "c": "y"}, "Forecast": {"v": "D/U", "c": "y"}, "Labor Opt": {"v": "D/U", "c": "y"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "DF", "c": "g"}}, "Specialty Retail": {"Budget": {"v": "D/U", "c": "y"}, "Forecast": {"v": "D/U", "c": "y"}, "Labor Opt": {"v": "D/U", "c": "y"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "DF", "c": "g"}}, "Accommodations": {"Budget": {"v": "D/K", "c": "y"}, "Forecast": {"v": "D/K", "c": "y"}, "Labor Opt": {"v": "D/7S", "c": "y"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "dg"}, "Absence Mgmt": {"v": "DF", "c": "dg"}, "Mobile Eng": {"v": "DF", "c": "dg"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "DF", "c": "g"}}, "Sporting & Entertainment": {"Budget": {"v": "D/7S", "c": "y"}, "Forecast": {"v": "D/7S", "c": "y"}, "Labor Opt": {"v": "D/7S", "c": "y"}, "Schedule": {"v": "D/7S", "c": "y"}, "Time Entry": {"v": "DF", "c": "dg"}, "Absence Mgmt": {"v": "DF", "c": "dg"}, "Mobile Eng": {"v": "DF", "c": "dg"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "DF", "c": "g"}}, "Amusement Parks": {"Budget": {"v": "D/7S", "c": "y"}, "Forecast": {"v": "D/V", "c": "y"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "D/iT", "c": "y"}, "Time Entry": {"v": "DF", "c": "dg"}, "Absence Mgmt": {"v": "DF", "c": "dg"}, "Mobile Eng": {"v": "DF", "c": "dg"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "DF", "c": "g"}}, "Casinos": {"Budget": {"v": "D/F", "c": "y"}, "Forecast": {"v": "D/V", "c": "y"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "\u2014", "c": "r"}, "Time Entry": {"v": "DF", "c": "dg"}, "Absence Mgmt": {"v": "DF", "c": "dg"}, "Mobile Eng": {"v": "DF", "c": "dg"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "DF", "c": "g"}}, "Restaurants (FSR)": {"Budget": {"v": "D/F", "c": "y"}, "Forecast": {"v": "D/V", "c": "y"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "D/iT", "c": "y"}, "Time Entry": {"v": "D/iT", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "DF", "c": "g"}}, "Restaurants (QSR)": {"Budget": {"v": "D/F", "c": "y"}, "Forecast": {"v": "D/V", "c": "y"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "D/iT", "c": "y"}, "Time Entry": {"v": "D/iT", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/K", "c": "g"}, "Task Mgmt": {"v": "DF", "c": "g"}}}, "Manufacturing": {"Chemical/Metals": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "D/iT", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/K", "c": "dg"}, "Task Mgmt": {"v": "D/K", "c": "dg"}}, "Food/CPG": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "D/Q", "c": "y"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "D/iT", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/K", "c": "dg"}, "Task Mgmt": {"v": "D/K", "c": "dg"}}, "Tech/Electronics": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "D/7S", "c": "y"}, "Labor Opt": {"v": "D/Q", "c": "y"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "D/iT", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/K", "c": "dg"}, "Task Mgmt": {"v": "D/7S", "c": "dg"}}, "Transport/Machinery": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "D/7S", "c": "y"}, "Labor Opt": {"v": "D/Q", "c": "y"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "D/iT", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/K", "c": "dg"}, "Task Mgmt": {"v": "D/7S", "c": "dg"}}, "Defense": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "D/7S", "c": "y"}, "Labor Opt": {"v": "D/Q", "c": "y"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "D/iT", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/K", "c": "dg"}, "Task Mgmt": {"v": "D/7S", "c": "dg"}}, "Warehousing": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "D/7S", "c": "y"}, "Labor Opt": {"v": "D/Q", "c": "y"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "D/iT", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/K", "c": "dg"}, "Task Mgmt": {"v": "D/7S", "c": "dg"}}}, "Healthcare": {"Extended Care": {"Budget": {"v": "\u2014", "c": "r"}, "Forecast": {"v": "\u2014", "c": "r"}, "Labor Opt": {"v": "\u2014", "c": "r"}, "Schedule": {"v": "D/L", "c": "y"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/F", "c": "y"}, "Task Mgmt": {"v": "D/7S", "c": "y"}}, "Hospital & Nursing": {"Budget": {"v": "\u2014", "c": "r"}, "Forecast": {"v": "\u2014", "c": "r"}, "Labor Opt": {"v": "\u2014", "c": "r"}, "Schedule": {"v": "D/L", "c": "y"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/F", "c": "y"}, "Task Mgmt": {"v": "D/7S", "c": "y"}}, "H.Care IT & Services": {"Budget": {"v": "\u2014", "c": "r"}, "Forecast": {"v": "\u2014", "c": "r"}, "Labor Opt": {"v": "\u2014", "c": "r"}, "Schedule": {"v": "D/L", "c": "y"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/F", "c": "y"}, "Task Mgmt": {"v": "D/7S", "c": "y"}}, "Independent Clinic": {"Budget": {"v": "D/V", "c": "y"}, "Forecast": {"v": "D/K", "c": "y"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "D/L", "c": "y"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/F", "c": "y"}, "Task Mgmt": {"v": "D/7S", "c": "y"}}, "Life Sciences": {"Budget": {"v": "D/V", "c": "y"}, "Forecast": {"v": "D/K", "c": "y"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "D/L", "c": "y"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/F", "c": "y"}, "Task Mgmt": {"v": "D/V", "c": "y"}}, "Long Term Care": {"Budget": {"v": "D/V", "c": "y"}, "Forecast": {"v": "DF", "c": "g"}, "Labor Opt": {"v": "DF", "c": "g"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/F", "c": "y"}, "Task Mgmt": {"v": "D/V", "c": "y"}}, "Veterinary": {"Budget": {"v": "D/V", "c": "y"}, "Forecast": {"v": "DF", "c": "g"}, "Labor Opt": {"v": "DF", "c": "g"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/iT", "c": "y"}, "Task Mgmt": {"v": "D/V", "c": "y"}}, "Home Healthcare": {"Budget": {"v": "\u2014", "c": "r"}, "Forecast": {"v": "\u2014", "c": "r"}, "Labor Opt": {"v": "\u2014", "c": "r"}, "Schedule": {"v": "D/K", "c": "y"}, "Time Entry": {"v": "D/K", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "D/K", "c": "y"}, "Frontline Comms": {"v": "D/iT", "c": "g"}, "Task Mgmt": {"v": "D/V", "c": "y"}}}, "Public Sector": {"Education": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/iT", "c": "g"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Federal/Central Govt": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/iT", "c": "g"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Local/Municipal": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/iT", "c": "g"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Special Districts": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Dispatch": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "D/Q", "c": "y"}, "Time Entry": {"v": "D/Q", "c": "y"}, "Absence Mgmt": {"v": "D/Q", "c": "y"}, "Mobile Eng": {"v": "D/Q", "c": "y"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}}, "Services": {"Construction": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "D/Q", "c": "y"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "D/K", "c": "g"}}, "Field Services": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "D/Q", "c": "y"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "D/K", "c": "g"}}, "Logistics": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "D/Q", "c": "y"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "D/K", "c": "g"}}, "Mining, Oil, Gas": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "D/K", "c": "y"}, "Schedule": {"v": "D/Q", "c": "y"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "D/K", "c": "g"}}, "Information Services": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "D/7S", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Professional Services": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "D/7S", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Real Estate Services": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "D/7S", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Call Centres": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "D/7S", "c": "y"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "DF", "c": "g"}, "Frontline Comms": {"v": "D/U", "c": "g"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}}, "Financial Services": {"Banking/Payments": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "D/Ind", "c": "y"}, "Frontline Comms": {"v": "\u2014", "c": "r"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Asset Managers": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "D/Ind", "c": "y"}, "Frontline Comms": {"v": "\u2014", "c": "na"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Funds/Trusts": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "D/Ind", "c": "y"}, "Frontline Comms": {"v": "\u2014", "c": "na"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Insurance": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "D/Ind", "c": "y"}, "Frontline Comms": {"v": "\u2014", "c": "na"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}, "Not For Profit": {"Budget": {"v": "\u2014", "c": "na"}, "Forecast": {"v": "\u2014", "c": "na"}, "Labor Opt": {"v": "\u2014", "c": "na"}, "Schedule": {"v": "DF", "c": "g"}, "Time Entry": {"v": "DF", "c": "g"}, "Absence Mgmt": {"v": "DF", "c": "g"}, "Mobile Eng": {"v": "D/Ind", "c": "y"}, "Frontline Comms": {"v": "\u2014", "c": "na"}, "Task Mgmt": {"v": "\u2014", "c": "na"}}}}, "HR": {"Retail": {"Big Box / Grocery": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "DF", "c": "dg"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "\u2014", "c": "na"}}, "Specialty Retail": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "D/S", "c": "y"}}, "Accommodations": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "DF", "c": "dg"}, "Doc Mgmt": {"v": "DF", "c": "dg"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Sporting & Entertainment": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "DF", "c": "dg"}, "Doc Mgmt": {"v": "D/W", "c": "y"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Amusement Parks": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "DF", "c": "dg"}, "Knowledge Mgmt": {"v": "\u2014", "c": "r"}}, "Casinos": {"People Analytics": {"v": "D/S", "c": "y"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "D/G", "c": "y"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Restaurants (FSR)": {"People Analytics": {"v": "\u2014", "c": "r"}, "Copilot": {"v": "\u2014", "c": "na"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "\u2014", "c": "r"}}, "Restaurants (QSR)": {"People Analytics": {"v": "\u2014", "c": "na"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}}, "Manufacturing": {"Chemical/Metals": {"People Analytics": {"v": "DF", "c": "dg"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "D/S", "c": "y"}}, "Food/CPG": {"People Analytics": {"v": "DF", "c": "dg"}, "Copilot": {"v": "\u2014", "c": "r"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "\u2014", "c": "na"}}, "Tech/Electronics": {"People Analytics": {"v": "D/V", "c": "y"}, "Copilot": {"v": "D/V", "c": "g"}, "Doc Mgmt": {"v": "\u2014", "c": "na"}, "Knowledge Mgmt": {"v": "DF", "c": "dg"}}, "Transport/Machinery": {"People Analytics": {"v": "D/G", "c": "y"}, "Copilot": {"v": "D/G", "c": "g"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "DF", "c": "dg"}}, "Defense": {"People Analytics": {"v": "\u2014", "c": "r"}, "Copilot": {"v": "D/G", "c": "g"}, "Doc Mgmt": {"v": "\u2014", "c": "na"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Warehousing": {"People Analytics": {"v": "\u2014", "c": "na"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}}, "Healthcare": {"Extended Care": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "D/W", "c": "y"}, "Knowledge Mgmt": {"v": "D/S", "c": "y"}}, "Hospital & Nursing": {"People Analytics": {"v": "D/S", "c": "y"}, "Copilot": {"v": "DF", "c": "dg"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "H.Care IT & Services": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "\u2014", "c": "na"}, "Doc Mgmt": {"v": "DF", "c": "dg"}, "Knowledge Mgmt": {"v": "\u2014", "c": "na"}}, "Independent Clinic": {"People Analytics": {"v": "D/S", "c": "y"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "D/G", "c": "y"}, "Knowledge Mgmt": {"v": "\u2014", "c": "na"}}, "Life Sciences": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "DF", "c": "dg"}, "Doc Mgmt": {"v": "D/G", "c": "y"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Long Term Care": {"People Analytics": {"v": "DF", "c": "dg"}, "Copilot": {"v": "D/G", "c": "y"}, "Doc Mgmt": {"v": "\u2014", "c": "r"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Veterinary": {"People Analytics": {"v": "DF", "c": "dg"}, "Copilot": {"v": "DF", "c": "dg"}, "Doc Mgmt": {"v": "DF", "c": "dg"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Home Healthcare": {"People Analytics": {"v": "\u2014", "c": "r"}, "Copilot": {"v": "D/V", "c": "y"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "\u2014", "c": "r"}}}, "Public Sector": {"Education": {"People Analytics": {"v": "\u2014", "c": "na"}, "Copilot": {"v": "DF", "c": "dg"}, "Doc Mgmt": {"v": "DF", "c": "dg"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Federal/Central Govt": {"People Analytics": {"v": "D/V", "c": "y"}, "Copilot": {"v": "DF", "c": "dg"}, "Doc Mgmt": {"v": "DF", "c": "dg"}, "Knowledge Mgmt": {"v": "DF", "c": "dg"}}, "Local/Municipal": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "DF", "c": "dg"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Special Districts": {"People Analytics": {"v": "DF", "c": "dg"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "DF", "c": "dg"}, "Knowledge Mgmt": {"v": "D/V", "c": "y"}}, "Dispatch": {"People Analytics": {"v": "\u2014", "c": "r"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "D/S", "c": "y"}, "Knowledge Mgmt": {"v": "DF", "c": "dg"}}}, "Services": {"Construction": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "\u2014", "c": "r"}, "Doc Mgmt": {"v": "\u2014", "c": "r"}, "Knowledge Mgmt": {"v": "DF", "c": "dg"}}, "Field Services": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "D/S", "c": "y"}, "Doc Mgmt": {"v": "D/M", "c": "y"}, "Knowledge Mgmt": {"v": "D/S", "c": "y"}}, "Logistics": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "D/M", "c": "y"}, "Doc Mgmt": {"v": "\u2014", "c": "na"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Mining, Oil, Gas": {"People Analytics": {"v": "DF", "c": "dg"}, "Copilot": {"v": "D/M", "c": "y"}, "Doc Mgmt": {"v": "D/M", "c": "y"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Information Services": {"People Analytics": {"v": "\u2014", "c": "r"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "\u2014", "c": "r"}, "Knowledge Mgmt": {"v": "D/S", "c": "y"}}, "Professional Services": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "D/S", "c": "y"}, "Doc Mgmt": {"v": "\u2014", "c": "r"}, "Knowledge Mgmt": {"v": "\u2014", "c": "r"}}, "Real Estate Services": {"People Analytics": {"v": "D/V", "c": "y"}, "Copilot": {"v": "DF", "c": "dg"}, "Doc Mgmt": {"v": "\u2014", "c": "na"}, "Knowledge Mgmt": {"v": "DF", "c": "dg"}}, "Call Centres": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "DF", "c": "dg"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "D/V", "c": "y"}}}, "Financial Services": {"Banking/Payments": {"People Analytics": {"v": "\u2014", "c": "na"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "\u2014", "c": "na"}}, "Asset Managers": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "D/V", "c": "y"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Funds/Trusts": {"People Analytics": {"v": "DF", "c": "dg"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "\u2014", "c": "r"}, "Knowledge Mgmt": {"v": "D/V", "c": "y"}}, "Insurance": {"People Analytics": {"v": "D/S", "c": "y"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "D/V", "c": "y"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}, "Not For Profit": {"People Analytics": {"v": "DF", "c": "g"}, "Copilot": {"v": "DF", "c": "g"}, "Doc Mgmt": {"v": "DF", "c": "g"}, "Knowledge Mgmt": {"v": "DF", "c": "g"}}}}, "Payroll": {"Retail": {"Big Box / Grocery": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "DF", "c": "dg"}, "Pension Auto": {"v": "DF", "c": "dg"}}, "Specialty Retail": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "D/A", "c": "dg"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Accommodations": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "D/A", "c": "dg"}, "Pension Auto": {"v": "DF", "c": "dg"}}, "Sporting & Entertainment": {"ACA": {"v": "\u2014", "c": "r"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "D/A", "c": "y"}}, "Amusement Parks": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "D/A", "c": "dg"}, "Pension Auto": {"v": "D/Paychex (NC)", "c": "r"}}, "Casinos": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "\u2014", "c": "na"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Restaurants (FSR)": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "\u2014", "c": "na"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Restaurants (QSR)": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "\u2014", "c": "na"}, "Pension Auto": {"v": "DF", "c": "dg"}}}, "Manufacturing": {"Chemical/Metals": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "DF", "c": "dg"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Food/CPG": {"ACA": {"v": "D/G", "c": "y"}, "Payroll": {"v": "\u2014", "c": "na"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Tech/Electronics": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "\u2014", "c": "na"}}, "Transport/Machinery": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "\u2014", "c": "na"}}, "Defense": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "DF", "c": "dg"}}, "Warehousing": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "DF", "c": "dg"}, "Pension Auto": {"v": "\u2014", "c": "na"}}}, "Healthcare": {"Extended Care": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "\u2014", "c": "na"}}, "Hospital & Nursing": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "D/P", "c": "y"}}, "H.Care IT & Services": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "DF", "c": "dg"}}, "Independent Clinic": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "\u2014", "c": "na"}, "Pension Auto": {"v": "D/P", "c": "y"}}, "Life Sciences": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "DF", "c": "dg"}}, "Long Term Care": {"ACA": {"v": "\u2014", "c": "na"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "DF", "c": "dg"}}, "Veterinary": {"ACA": {"v": "D/P", "c": "y"}, "Payroll": {"v": "D/G", "c": "y"}, "Pension Auto": {"v": "\u2014", "c": "na"}}, "Home Healthcare": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "D/G", "c": "y"}, "Pension Auto": {"v": "DF", "c": "g"}}}, "Public Sector": {"Education": {"ACA": {"v": "D/P", "c": "y"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Federal/Central Govt": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "DF", "c": "dg"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Local/Municipal": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Special Districts": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Dispatch": {"ACA": {"v": "\u2014", "c": "na"}, "Payroll": {"v": "D/G", "c": "y"}, "Pension Auto": {"v": "DF", "c": "dg"}}}, "Services": {"Construction": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "DF", "c": "dg"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Field Services": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "DF", "c": "dg"}, "Pension Auto": {"v": "DF", "c": "dg"}}, "Logistics": {"ACA": {"v": "\u2014", "c": "na"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Mining, Oil, Gas": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "DF", "c": "dg"}, "Pension Auto": {"v": "DF", "c": "dg"}}, "Information Services": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "D/G", "c": "y"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Professional Services": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "\u2014", "c": "na"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Real Estate Services": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "\u2014", "c": "r"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Call Centres": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "DF", "c": "dg"}}}, "Financial Services": {"Banking/Payments": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "D/G", "c": "y"}}, "Asset Managers": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "\u2014", "c": "na"}, "Pension Auto": {"v": "DF", "c": "g"}}, "Funds/Trusts": {"ACA": {"v": "DF", "c": "g"}, "Payroll": {"v": "D/G", "c": "y"}, "Pension Auto": {"v": "\u2014", "c": "na"}}, "Insurance": {"ACA": {"v": "\u2014", "c": "r"}, "Payroll": {"v": "D/G", "c": "y"}, "Pension Auto": {"v": "DF", "c": "dg"}}, "Not For Profit": {"ACA": {"v": "DF", "c": "dg"}, "Payroll": {"v": "DF", "c": "g"}, "Pension Auto": {"v": "DF", "c": "g"}}}}, "Talent": {"Retail": {"Big Box / Grocery": {"Recruiting": {"v": "D/Lev", "c": "y"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "\u2014", "c": "na"}, "Onboarding": {"v": "D/Lev", "c": "y"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "D/Lev", "c": "y"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Specialty Retail": {"Recruiting": {"v": "D/Sum", "c": "y"}, "Succession": {"v": "D/Lev", "c": "y"}, "Compensation": {"v": "D/Lev", "c": "y"}, "Onboarding": {"v": "D/Deg", "c": "y"}, "Performance": {"v": "D/Deg", "c": "y"}, "Learning": {"v": "D/Deg", "c": "y"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Accommodations": {"Recruiting": {"v": "\u2014", "c": "na"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "DF", "c": "dg"}, "Performance": {"v": "\u2014", "c": "na"}, "Learning": {"v": "D/Lev", "c": "y"}, "Engagement": {"v": "D/Sum", "c": "y"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Sporting & Entertainment": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "DF", "c": "dg"}, "Compensation": {"v": "D/Lev", "c": "y"}, "Onboarding": {"v": "DF", "c": "dg"}, "Performance": {"v": "D/Saba (C)", "c": "y"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "\u2014", "c": "na"}, "Career Explorer": {"v": "\u2014", "c": "na"}}, "Amusement Parks": {"Recruiting": {"v": "DF", "c": "dg"}, "Succession": {"v": "DF", "c": "dg"}, "Compensation": {"v": "DF", "c": "dg"}, "Onboarding": {"v": "\u2014", "c": "na"}, "Performance": {"v": "\u2014", "c": "na"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "D/Sum", "c": "y"}}, "Casinos": {"Recruiting": {"v": "DF", "c": "dg"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "D/Gre", "c": "y"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "\u2014", "c": "na"}, "Career Explorer": {"v": "\u2014", "c": "na"}}, "Restaurants (FSR)": {"Recruiting": {"v": "D/Gre", "c": "y"}, "Succession": {"v": "D/Gre", "c": "y"}, "Compensation": {"v": "D/Gre", "c": "y"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "D/Cor", "c": "y"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Restaurants (QSR)": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "DF", "c": "dg"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "DF", "c": "dg"}, "Performance": {"v": "\u2014", "c": "na"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "D/Cor", "c": "y"}, "Career Explorer": {"v": "DF", "c": "dg"}}}, "Manufacturing": {"Chemical/Metals": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "\u2014", "c": "na"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "\u2014", "c": "na"}, "Career Explorer": {"v": "\u2014", "c": "r"}}, "Food/CPG": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "\u2014", "c": "r"}, "Compensation": {"v": "\u2014", "c": "na"}, "Onboarding": {"v": "D/Gre", "c": "y"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "\u2014", "c": "na"}}, "Tech/Electronics": {"Recruiting": {"v": "DF", "c": "dg"}, "Succession": {"v": "D/Gre", "c": "y"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "D/Gre", "c": "y"}, "Performance": {"v": "D/Gre", "c": "y"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Transport/Machinery": {"Recruiting": {"v": "DF", "c": "dg"}, "Succession": {"v": "DF", "c": "g"}, "Compensation": {"v": "\u2014", "c": "r"}, "Onboarding": {"v": "\u2014", "c": "na"}, "Performance": {"v": "\u2014", "c": "na"}, "Learning": {"v": "D/Gre", "c": "y"}, "Engagement": {"v": "\u2014", "c": "na"}, "Career Explorer": {"v": "D/Sum", "c": "y"}}, "Defense": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "\u2014", "c": "na"}, "Onboarding": {"v": "D/Lev", "c": "y"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "\u2014", "c": "r"}, "Career Explorer": {"v": "\u2014", "c": "na"}}, "Warehousing": {"Recruiting": {"v": "DF", "c": "dg"}, "Succession": {"v": "DF", "c": "g"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "\u2014", "c": "r"}, "Performance": {"v": "D/Sum", "c": "y"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "\u2014", "c": "r"}}}, "Healthcare": {"Extended Care": {"Recruiting": {"v": "D/Lev", "c": "y"}, "Succession": {"v": "\u2014", "c": "r"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "D/Sum", "c": "y"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "D/Sum", "c": "y"}}, "Hospital & Nursing": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "D/Lev", "c": "y"}, "Compensation": {"v": "D/Sum", "c": "y"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "DF", "c": "dg"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "DF", "c": "dg"}, "Career Explorer": {"v": "\u2014", "c": "na"}}, "H.Care IT & Services": {"Recruiting": {"v": "DF", "c": "dg"}, "Succession": {"v": "D/Lev", "c": "y"}, "Compensation": {"v": "D/Sum", "c": "y"}, "Onboarding": {"v": "\u2014", "c": "na"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "D/Cor", "c": "y"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Independent Clinic": {"Recruiting": {"v": "D/Lev", "c": "y"}, "Succession": {"v": "D/Lev", "c": "y"}, "Compensation": {"v": "\u2014", "c": "na"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "D/Cor", "c": "y"}, "Learning": {"v": "DF", "c": "dg"}, "Engagement": {"v": "\u2014", "c": "na"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Life Sciences": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "\u2014", "c": "r"}, "Onboarding": {"v": "\u2014", "c": "na"}, "Performance": {"v": "\u2014", "c": "na"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Long Term Care": {"Recruiting": {"v": "DF", "c": "dg"}, "Succession": {"v": "D/Sum", "c": "y"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "DF", "c": "dg"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "\u2014", "c": "na"}}, "Veterinary": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "D/Sum", "c": "y"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "\u2014", "c": "na"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "\u2014", "c": "na"}, "Career Explorer": {"v": "D/Cor", "c": "y"}}, "Home Healthcare": {"Recruiting": {"v": "DF", "c": "dg"}, "Succession": {"v": "DF", "c": "g"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "D/Sum", "c": "y"}, "Performance": {"v": "\u2014", "c": "na"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "\u2014", "c": "r"}, "Career Explorer": {"v": "\u2014", "c": "na"}}}, "Public Sector": {"Education": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "D/Sum", "c": "y"}, "Compensation": {"v": "\u2014", "c": "na"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "D/Cor", "c": "y"}, "Learning": {"v": "\u2014", "c": "r"}, "Engagement": {"v": "\u2014", "c": "r"}, "Career Explorer": {"v": "\u2014", "c": "na"}}, "Federal/Central Govt": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "D/Sum", "c": "y"}, "Onboarding": {"v": "D/Cor", "c": "y"}, "Performance": {"v": "DF", "c": "dg"}, "Learning": {"v": "D/Cor", "c": "y"}, "Engagement": {"v": "\u2014", "c": "na"}, "Career Explorer": {"v": "\u2014", "c": "r"}}, "Local/Municipal": {"Recruiting": {"v": "D/Sum", "c": "y"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "D/Cor", "c": "y"}, "Performance": {"v": "D/Cor", "c": "y"}, "Learning": {"v": "DF", "c": "dg"}, "Engagement": {"v": "\u2014", "c": "na"}, "Career Explorer": {"v": "\u2014", "c": "na"}}, "Special Districts": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "DF", "c": "g"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "\u2014", "c": "na"}, "Career Explorer": {"v": "DF", "c": "dg"}}, "Dispatch": {"Recruiting": {"v": "D/Sum", "c": "y"}, "Succession": {"v": "DF", "c": "g"}, "Compensation": {"v": "D/Sum", "c": "y"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "\u2014", "c": "r"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "\u2014", "c": "na"}, "Career Explorer": {"v": "DF", "c": "dg"}}}, "Services": {"Construction": {"Recruiting": {"v": "\u2014", "c": "na"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "DF", "c": "dg"}, "Onboarding": {"v": "DF", "c": "dg"}, "Performance": {"v": "\u2014", "c": "na"}, "Learning": {"v": "\u2014", "c": "na"}, "Engagement": {"v": "D/Deg", "c": "y"}, "Career Explorer": {"v": "D/Deg", "c": "y"}}, "Field Services": {"Recruiting": {"v": "DF", "c": "dg"}, "Succession": {"v": "DF", "c": "dg"}, "Compensation": {"v": "D/Sum", "c": "y"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "\u2014", "c": "na"}}, "Logistics": {"Recruiting": {"v": "\u2014", "c": "na"}, "Succession": {"v": "DF", "c": "dg"}, "Compensation": {"v": "D/Sum", "c": "y"}, "Onboarding": {"v": "DF", "c": "dg"}, "Performance": {"v": "\u2014", "c": "r"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "\u2014", "c": "r"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Mining, Oil, Gas": {"Recruiting": {"v": "\u2014", "c": "r"}, "Succession": {"v": "D/Sum", "c": "y"}, "Compensation": {"v": "\u2014", "c": "na"}, "Onboarding": {"v": "\u2014", "c": "na"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "D/Deg", "c": "y"}, "Engagement": {"v": "\u2014", "c": "r"}, "Career Explorer": {"v": "\u2014", "c": "na"}}, "Information Services": {"Recruiting": {"v": "D/Sum", "c": "y"}, "Succession": {"v": "D/Sum", "c": "y"}, "Compensation": {"v": "DF", "c": "dg"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "\u2014", "c": "na"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "\u2014", "c": "r"}, "Career Explorer": {"v": "D/Deg", "c": "y"}}, "Professional Services": {"Recruiting": {"v": "D/Sum", "c": "y"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "\u2014", "c": "na"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "D/Deg", "c": "y"}}, "Real Estate Services": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "DF", "c": "dg"}, "Compensation": {"v": "DF", "c": "g"}, "Onboarding": {"v": "DF", "c": "g"}, "Performance": {"v": "\u2014", "c": "r"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "DF", "c": "dg"}, "Career Explorer": {"v": "DF", "c": "dg"}}, "Call Centres": {"Recruiting": {"v": "\u2014", "c": "na"}, "Succession": {"v": "DF", "c": "g"}, "Compensation": {"v": "\u2014", "c": "na"}, "Onboarding": {"v": "\u2014", "c": "na"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "D/Deg", "c": "y"}, "Career Explorer": {"v": "\u2014", "c": "na"}}}, "Financial Services": {"Banking/Payments": {"Recruiting": {"v": "D/Sum", "c": "y"}, "Succession": {"v": "\u2014", "c": "r"}, "Compensation": {"v": "D/Deg", "c": "y"}, "Onboarding": {"v": "\u2014", "c": "r"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "D/Deg", "c": "y"}, "Engagement": {"v": "D/Deg", "c": "y"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Asset Managers": {"Recruiting": {"v": "\u2014", "c": "r"}, "Succession": {"v": "DF", "c": "g"}, "Compensation": {"v": "\u2014", "c": "r"}, "Onboarding": {"v": "\u2014", "c": "na"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "D/Deg", "c": "y"}, "Career Explorer": {"v": "DF", "c": "dg"}}, "Funds/Trusts": {"Recruiting": {"v": "\u2014", "c": "na"}, "Succession": {"v": "\u2014", "c": "na"}, "Compensation": {"v": "DF", "c": "dg"}, "Onboarding": {"v": "\u2014", "c": "na"}, "Performance": {"v": "D/Deg", "c": "y"}, "Learning": {"v": "DF", "c": "g"}, "Engagement": {"v": "\u2014", "c": "r"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Insurance": {"Recruiting": {"v": "DF", "c": "g"}, "Succession": {"v": "DF", "c": "g"}, "Compensation": {"v": "\u2014", "c": "na"}, "Onboarding": {"v": "\u2014", "c": "na"}, "Performance": {"v": "DF", "c": "g"}, "Learning": {"v": "D/Deg", "c": "y"}, "Engagement": {"v": "DF", "c": "g"}, "Career Explorer": {"v": "DF", "c": "g"}}, "Not For Profit": {"Recruiting": {"v": "\u2014", "c": "na"}, "Succession": {"v": "DF", "c": "g"}, "Compensation": {"v": "\u2014", "c": "na"}, "Onboarding": {"v": "\u2014", "c": "na"}, "Performance": {"v": "D/Deg", "c": "y"}, "Learning": {"v": "DF", "c": "dg"}, "Engagement": {"v": "D/Deg", "c": "y"}, "Career Explorer": {"v": "D/Deg", "c": "y"}}}}, "Benefits": {"Retail": {"Big Box / Grocery": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "D/Ea", "c": "y"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Specialty Retail": {"Benefits": {"v": "\u2014", "c": "na"}, "Benefits Billing": {"v": "\u2014", "c": "na"}, "Benefits Intel": {"v": "D/Ea", "c": "y"}}, "Accommodations": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "\u2014", "c": "na"}, "Benefits Intel": {"v": "DF", "c": "dg"}}, "Sporting & Entertainment": {"Benefits": {"v": "\u2014", "c": "na"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "\u2014", "c": "na"}}, "Amusement Parks": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "dg"}}, "Casinos": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "DF", "c": "dg"}, "Benefits Intel": {"v": "D/Ea", "c": "y"}}, "Restaurants (FSR)": {"Benefits": {"v": "\u2014", "c": "na"}, "Benefits Billing": {"v": "DF", "c": "dg"}, "Benefits Intel": {"v": "DF", "c": "dg"}}, "Restaurants (QSR)": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "g"}}}, "Manufacturing": {"Chemical/Metals": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "\u2014", "c": "na"}}, "Food/CPG": {"Benefits": {"v": "\u2014", "c": "na"}, "Benefits Billing": {"v": "DF", "c": "dg"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Tech/Electronics": {"Benefits": {"v": "D/Be", "c": "y"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Transport/Machinery": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "dg"}}, "Defense": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "D/Be", "c": "y"}, "Benefits Intel": {"v": "\u2014", "c": "r"}}, "Warehousing": {"Benefits": {"v": "D/Be", "c": "y"}, "Benefits Billing": {"v": "D/Ea", "c": "y"}, "Benefits Intel": {"v": "DF", "c": "dg"}}}, "Healthcare": {"Extended Care": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "\u2014", "c": "r"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Hospital & Nursing": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "dg"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "H.Care IT & Services": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "\u2014", "c": "na"}, "Benefits Intel": {"v": "DF", "c": "dg"}}, "Independent Clinic": {"Benefits": {"v": "D/Be", "c": "y"}, "Benefits Billing": {"v": "DF", "c": "dg"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Life Sciences": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "\u2014", "c": "na"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Long Term Care": {"Benefits": {"v": "\u2014", "c": "r"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "dg"}}, "Veterinary": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "dg"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Home Healthcare": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "\u2014", "c": "r"}, "Benefits Intel": {"v": "\u2014", "c": "r"}}}, "Public Sector": {"Education": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "D/Be", "c": "y"}}, "Federal/Central Govt": {"Benefits": {"v": "\u2014", "c": "na"}, "Benefits Billing": {"v": "\u2014", "c": "na"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Local/Municipal": {"Benefits": {"v": "\u2014", "c": "r"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "\u2014", "c": "na"}}, "Special Districts": {"Benefits": {"v": "D/Be", "c": "y"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Dispatch": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "dg"}}}, "Services": {"Construction": {"Benefits": {"v": "D/Be", "c": "y"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "dg"}}, "Field Services": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "DF", "c": "dg"}, "Benefits Intel": {"v": "DF", "c": "dg"}}, "Logistics": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Mining, Oil, Gas": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Information Services": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Professional Services": {"Benefits": {"v": "\u2014", "c": "r"}, "Benefits Billing": {"v": "D/Be", "c": "y"}, "Benefits Intel": {"v": "\u2014", "c": "na"}}, "Real Estate Services": {"Benefits": {"v": "\u2014", "c": "r"}, "Benefits Billing": {"v": "\u2014", "c": "r"}, "Benefits Intel": {"v": "\u2014", "c": "r"}}, "Call Centres": {"Benefits": {"v": "\u2014", "c": "r"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "DF", "c": "dg"}}}, "Financial Services": {"Banking/Payments": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "D/Be", "c": "g"}}, "Asset Managers": {"Benefits": {"v": "DF", "c": "g"}, "Benefits Billing": {"v": "DF", "c": "dg"}, "Benefits Intel": {"v": "D/Be", "c": "g"}}, "Funds/Trusts": {"Benefits": {"v": "D/Be", "c": "y"}, "Benefits Billing": {"v": "D/bsw", "c": "y"}, "Benefits Intel": {"v": "DF", "c": "g"}}, "Insurance": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "DF", "c": "g"}, "Benefits Intel": {"v": "D/bsw", "c": "g"}}, "Not For Profit": {"Benefits": {"v": "DF", "c": "dg"}, "Benefits Billing": {"v": "\u2014", "c": "na"}, "Benefits Intel": {"v": "D/bsw", "c": "g"}}}}, "Managed": {"Retail": {"Big Box / Grocery": {"Mgd Garnishments": {"v": "D/Con", "c": "y"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "D/AD", "c": "y"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}, "Specialty Retail": {"Mgd Garnishments": {"v": "D/Con", "c": "y"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "\u2014", "c": "r"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}, "Accommodations": {"Mgd Garnishments": {"v": "\u2014", "c": "r"}, "CC - Pay": {"v": "\u2014", "c": "r"}, "CC - Benefits": {"v": "D/AD", "c": "y"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}, "Sporting & Entertainment": {"Mgd Garnishments": {"v": "\u2014", "c": "r"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "DF", "c": "g"}, "CC - Garnishments": {"v": "DF", "c": "dg"}}, "Amusement Parks": {"Mgd Garnishments": {"v": "D/W", "c": "y"}, "CC - Pay": {"v": "D/W", "c": "y"}, "CC - Benefits": {"v": "D/W", "c": "y"}, "CC - Garnishments": {"v": "DF", "c": "g"}}, "Casinos": {"Mgd Garnishments": {"v": "\u2014", "c": "na"}, "CC - Pay": {"v": "D/Con", "c": "y"}, "CC - Benefits": {"v": "\u2014", "c": "na"}, "CC - Garnishments": {"v": "DF", "c": "g"}}, "Restaurants (FSR)": {"Mgd Garnishments": {"v": "DF", "c": "g"}, "CC - Pay": {"v": "D/Con", "c": "y"}, "CC - Benefits": {"v": "DF", "c": "dg"}, "CC - Garnishments": {"v": "DF", "c": "g"}}, "Restaurants (QSR)": {"Mgd Garnishments": {"v": "\u2014", "c": "na"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "DF", "c": "g"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}}, "Manufacturing": {"Chemical/Metals": {"Mgd Garnishments": {"v": "D/Con", "c": "y"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "DF", "c": "g"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}, "Food/CPG": {"Mgd Garnishments": {"v": "DF", "c": "g"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "\u2014", "c": "na"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}, "Tech/Electronics": {"Mgd Garnishments": {"v": "DF", "c": "g"}, "CC - Pay": {"v": "DF", "c": "dg"}, "CC - Benefits": {"v": "DF", "c": "dg"}, "CC - Garnishments": {"v": "\u2014", "c": "r"}}, "Transport/Machinery": {"Mgd Garnishments": {"v": "\u2014", "c": "na"}, "CC - Pay": {"v": "D/Con", "c": "y"}, "CC - Benefits": {"v": "\u2014", "c": "na"}, "CC - Garnishments": {"v": "DF", "c": "dg"}}, "Defense": {"Mgd Garnishments": {"v": "DF", "c": "dg"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "DF", "c": "g"}, "CC - Garnishments": {"v": "\u2014", "c": "r"}}, "Warehousing": {"Mgd Garnishments": {"v": "D/W", "c": "y"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "DF", "c": "g"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}}, "Healthcare": {"Extended Care": {"Mgd Garnishments": {"v": "DF", "c": "g"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "DF", "c": "g"}, "CC - Garnishments": {"v": "D/W", "c": "y"}}, "Hospital & Nursing": {"Mgd Garnishments": {"v": "\u2014", "c": "na"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "DF", "c": "g"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}, "H.Care IT & Services": {"Mgd Garnishments": {"v": "\u2014", "c": "na"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "D/W", "c": "y"}, "CC - Garnishments": {"v": "\u2014", "c": "r"}}, "Independent Clinic": {"Mgd Garnishments": {"v": "D/W", "c": "y"}, "CC - Pay": {"v": "D/W", "c": "y"}, "CC - Benefits": {"v": "DF", "c": "dg"}, "CC - Garnishments": {"v": "DF", "c": "g"}}, "Life Sciences": {"Mgd Garnishments": {"v": "D/W", "c": "y"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "DF", "c": "dg"}, "CC - Garnishments": {"v": "\u2014", "c": "r"}}, "Long Term Care": {"Mgd Garnishments": {"v": "\u2014", "c": "na"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "DF", "c": "g"}, "CC - Garnishments": {"v": "\u2014", "c": "r"}}, "Veterinary": {"Mgd Garnishments": {"v": "DF", "c": "g"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "D/Con", "c": "y"}, "CC - Garnishments": {"v": "\u2014", "c": "r"}}, "Home Healthcare": {"Mgd Garnishments": {"v": "DF", "c": "dg"}, "CC - Pay": {"v": "D/Con", "c": "y"}, "CC - Benefits": {"v": "D/Con", "c": "y"}, "CC - Garnishments": {"v": "DF", "c": "dg"}}}, "Public Sector": {"Education": {"Mgd Garnishments": {"v": "DF", "c": "g"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "DF", "c": "dg"}, "CC - Garnishments": {"v": "DF", "c": "g"}}, "Federal/Central Govt": {"Mgd Garnishments": {"v": "D/Al", "c": "g"}, "CC - Pay": {"v": "D/Al", "c": "g"}, "CC - Benefits": {"v": "D/Al", "c": "g"}, "CC - Garnishments": {"v": "DF", "c": "dg"}}, "Local/Municipal": {"Mgd Garnishments": {"v": "\u2014", "c": "na"}, "CC - Pay": {"v": "D/Al", "c": "g"}, "CC - Benefits": {"v": "D/Al", "c": "g"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}, "Special Districts": {"Mgd Garnishments": {"v": "DF", "c": "g"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "D/Al", "c": "g"}, "CC - Garnishments": {"v": "DF", "c": "g"}}, "Dispatch": {"Mgd Garnishments": {"v": "\u2014", "c": "na"}, "CC - Pay": {"v": "D/Al", "c": "g"}, "CC - Benefits": {"v": "DF", "c": "g"}, "CC - Garnishments": {"v": "D/Al", "c": "g"}}}, "Services": {"Construction": {"Mgd Garnishments": {"v": "D/W", "c": "y"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "DF", "c": "g"}, "CC - Garnishments": {"v": "DF", "c": "g"}}, "Field Services": {"Mgd Garnishments": {"v": "DF", "c": "g"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "\u2014", "c": "na"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}, "Logistics": {"Mgd Garnishments": {"v": "\u2014", "c": "na"}, "CC - Pay": {"v": "\u2014", "c": "r"}, "CC - Benefits": {"v": "\u2014", "c": "r"}, "CC - Garnishments": {"v": "DF", "c": "g"}}, "Mining, Oil, Gas": {"Mgd Garnishments": {"v": "D/W", "c": "y"}, "CC - Pay": {"v": "\u2014", "c": "r"}, "CC - Benefits": {"v": "\u2014", "c": "r"}, "CC - Garnishments": {"v": "DF", "c": "g"}}, "Information Services": {"Mgd Garnishments": {"v": "\u2014", "c": "r"}, "CC - Pay": {"v": "\u2014", "c": "r"}, "CC - Benefits": {"v": "\u2014", "c": "r"}, "CC - Garnishments": {"v": "\u2014", "c": "r"}}, "Professional Services": {"Mgd Garnishments": {"v": "\u2014", "c": "na"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "\u2014", "c": "na"}, "CC - Garnishments": {"v": "D/AD", "c": "g"}}, "Real Estate Services": {"Mgd Garnishments": {"v": "DF", "c": "dg"}, "CC - Pay": {"v": "D/AD", "c": "g"}, "CC - Benefits": {"v": "D/AD", "c": "g"}, "CC - Garnishments": {"v": "D/AD", "c": "g"}}, "Call Centres": {"Mgd Garnishments": {"v": "D/W", "c": "y"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "DF", "c": "dg"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}}, "Financial Services": {"Banking/Payments": {"Mgd Garnishments": {"v": "DF", "c": "dg"}, "CC - Pay": {"v": "DF", "c": "dg"}, "CC - Benefits": {"v": "D/AD", "c": "g"}, "CC - Garnishments": {"v": "D/AD", "c": "g"}}, "Asset Managers": {"Mgd Garnishments": {"v": "DF", "c": "g"}, "CC - Pay": {"v": "DF", "c": "g"}, "CC - Benefits": {"v": "\u2014", "c": "r"}, "CC - Garnishments": {"v": "D/AD", "c": "g"}}, "Funds/Trusts": {"Mgd Garnishments": {"v": "\u2014", "c": "r"}, "CC - Pay": {"v": "\u2014", "c": "r"}, "CC - Benefits": {"v": "\u2014", "c": "na"}, "CC - Garnishments": {"v": "DF", "c": "g"}}, "Insurance": {"Mgd Garnishments": {"v": "D/W", "c": "y"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "DF", "c": "dg"}, "CC - Garnishments": {"v": "\u2014", "c": "na"}}, "Not For Profit": {"Mgd Garnishments": {"v": "DF", "c": "g"}, "CC - Pay": {"v": "\u2014", "c": "na"}, "CC - Benefits": {"v": "\u2014", "c": "na"}, "CC - Garnishments": {"v": "\u2014", "c": "r"}}}}};
+
+const NAICS={"521":{"p":"Financial Services","s":"Banking/Payments"},"522":{"p":"Financial Services","s":"Banking/Payments"},"523":{"p":"Financial Services","s":"Asset Managers"},"524":{"p":"Financial Services","s":"Insurance"},"525":{"p":"Financial Services","s":"Funds/Trusts"},"621A":{"p":"Healthcare","s":"Independent Clinic"},"6216":{"p":"Healthcare","s":"Extended Care"},"6215":{"p":"Healthcare","s":"H.Care IT & Services"},"6219":{"p":"Healthcare","s":"Independent Clinic"},"6214":{"p":"Healthcare","s":"Independent Clinic"},"622":{"p":"Healthcare","s":"Hospital & Nursing"},"623":{"p":"Healthcare","s":"Hospital & Nursing"},"624":{"p":"Healthcare","s":"Extended Care"},"31A":{"p":"Manufacturing","s":"Food/CPG"},"31B":{"p":"Manufacturing","s":"Chemical/Metals"},"32":{"p":"Manufacturing","s":"Chemical/Metals"},"33A":{"p":"Manufacturing","s":"Chemical/Metals"},"333":{"p":"Manufacturing","s":"Transport/Machinery"},"334":{"p":"Manufacturing","s":"Tech/Electronics"},"335":{"p":"Manufacturing","s":"Food/CPG"},"336":{"p":"Manufacturing","s":"Transport/Machinery"},"337":{"p":"Manufacturing","s":"Food/CPG"},"339":{"p":"Manufacturing","s":"Food/CPG"},"11":{"p":"Services","s":"Mining, Oil, Gas"},"21":{"p":"Services","s":"Mining, Oil, Gas"},"236":{"p":"Services","s":"Construction"},"237":{"p":"Services","s":"Construction"},"238":{"p":"Services","s":"Construction"},"332":{"p":"Manufacturing","s":"Chemical/Metals"},"423":{"p":"Retail","s":"Specialty Retail"},"424":{"p":"Retail","s":"Specialty Retail"},"4244":{"p":"Retail","s":"Big Box / Grocery"},"425":{"p":"Retail","s":"Specialty Retail"},"441":{"p":"Retail","s":"Specialty Retail"},"444":{"p":"Retail","s":"Specialty Retail"},"4451":{"p":"Retail","s":"Big Box / Grocery"},"4452":{"p":"Retail","s":"Big Box / Grocery"},"4453":{"p":"Retail","s":"Big Box / Grocery"},"449":{"p":"Retail","s":"Specialty Retail"},"455":{"p":"Retail","s":"Specialty Retail"},"4561":{"p":"Retail","s":"Specialty Retail"},"457":{"p":"Retail","s":"Specialty Retail"},"458":{"p":"Retail","s":"Specialty Retail"},"485":{"p":"Public Sector","s":"Local/Municipal"},"4911":{"p":"Public Sector","s":"Federal/Central Govt"},"512":{"p":"Services","s":"Information Services"},"513":{"p":"Services","s":"Information Services"},"516":{"p":"Services","s":"Information Services"},"517":{"p":"Services","s":"Information Services"},"518":{"p":"Services","s":"Information Services"},"519":{"p":"Services","s":"Information Services"},"53":{"p":"Services","s":"Real Estate Services"},"531":{"p":"Services","s":"Real Estate Services"},"541":{"p":"Services","s":"Professional Services"},"55":{"p":"Services","s":"Professional Services"},"56":{"p":"Services","s":"Field Services"},"561":{"p":"Services","s":"Field Services"},"562":{"p":"Services","s":"Field Services"},"611":{"p":"Public Sector","s":"Education"},"711":{"p":"Retail","s":"Sporting & Entertainment"},"712":{"p":"Retail","s":"Amusement Parks"},"713":{"p":"Retail","s":"Amusement Parks"},"721":{"p":"Retail","s":"Accommodations"},"722":{"p":"Retail","s":"Restaurants (FSR)"},"81":{"p":"Financial Services","s":"Not For Profit"},"812":{"p":"Financial Services","s":"Not For Profit"},"921":{"p":"Public Sector","s":"Local/Municipal"},"922":{"p":"Public Sector","s":"Federal/Central Govt"},"923":{"p":"Public Sector","s":"Special Districts"},"924":{"p":"Public Sector","s":"Special Districts"},"925":{"p":"Public Sector","s":"Special Districts"},"926":{"p":"Public Sector","s":"Special Districts"},"927":{"p":"Public Sector","s":"Federal/Central Govt"},"928":{"p":"Public Sector","s":"Federal/Central Govt"}};
+
+const SUBS={"Retail":["Big Box / Grocery","Specialty Retail","Accommodations","Sporting & Entertainment","Amusement Parks","Casinos","Restaurants (FSR)","Restaurants (QSR)"],"Manufacturing":["Chemical/Metals","Food/CPG","Tech/Electronics","Transport/Machinery","Defense","Warehousing"],"Healthcare":["Extended Care","Hospital & Nursing","H.Care IT & Services","Independent Clinic","Life Sciences","Long Term Care","Veterinary","Home Healthcare"],"Public Sector":["Education","Federal/Central Govt","Local/Municipal","Special Districts","Dispatch"],"Services":["Construction","Field Services","Logistics","Mining, Oil, Gas","Information Services","Professional Services","Real Estate Services","Call Centres"],"Financial Services":["Banking/Payments","Asset Managers","Funds/Trusts","Insurance","Not For Profit"]};
+
+const FAM_COLORS={"WFM":"#1565c0","HR":"#6a1b9a","Payroll":"#00695c","Talent":"#c62828","Benefits":"#e65100","Managed":"#37474f"};
+
+const STATUS_INFO={
+  dg:{label:"Differentiated",desc:"Best-in-class product — strong competitive advantage",dotColor:"#2e7d32"},
+  g:{label:"Market-appropriate",desc:"Solid fit that meets segment needs",dotColor:"#388e3c"},
+  y:{label:"With gap",desc:"Functional gaps present — sell with caution",dotColor:"#e65100"},
+  r:{label:"Do not sell",desc:"Not viable or Dayforce does not get ACV",dotColor:"#c62828"},
+  na:{label:"Not applicable",desc:"Module not relevant for this vertical",dotColor:"#aaa"}
+};
+
+const GEO_NOTES={Canada:"Showing North America recommendations. Canada-specific exceptions may apply.",EMEA:"This MVP uses North America data only — verify with your EMEA team.",APJ:"This MVP uses North America data only — verify with your APJ team."};
+const EXCEPTIONS={"Big Box / Grocery":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Food/CPG":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Tech/Electronics":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Transport/Machinery":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Defense":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Warehousing":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Extended Care":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Hospital & Nursing":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management — full shift scheduling gap noted","H.Care IT & Services":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Independent Clinic":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Life Sciences":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Long Term Care":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Veterinary":"Profile configuration gap identified"};
+
+// ── FORM ──────────────────────────────────────────────────────────────────────
+document.getElementById('primary').addEventListener('change',function(){
+  const sec=document.getElementById('secondary');
+  const subs=SUBS[this.value]||[];
+  sec.innerHTML=subs.length?'<option value="">Select sub-vertical</option>'+subs.map(s=>`<option>${s}</option>`).join(''):'<option value="">—</option>';
+  sec.disabled=!subs.length;
+  checkForm();
+});
+
+document.getElementById('naics').addEventListener('input',function(){
+  const v=this.value.trim();
+  const m=NAICS[v];
+  const el=document.getElementById('naics-msg');
+  if(m){
+    el.style.color='var(--g)';
+    el.textContent=`→ ${m.p} · ${m.s}`;
+    const pEl=document.getElementById('primary');
+    pEl.value=m.p;pEl.dispatchEvent(new Event('change'));
+    setTimeout(()=>{
+      const sEl=document.getElementById('secondary');
+      for(let i=0;i<sEl.options.length;i++){
+        if(sEl.options[i].text.toLowerCase().replace(/[^a-z]/g,'').startsWith(m.s.toLowerCase().replace(/[^a-z]/g,'').substring(0,5))||
+           m.s.toLowerCase().replace(/[^a-z]/g,'').startsWith(sEl.options[i].text.toLowerCase().replace(/[^a-z]/g,'').substring(0,5))){
+          sEl.value=sEl.options[i].value;break;
+        }
+      }
+      checkForm();
+    },60);
+  } else if(v.length>=2){
+    el.style.color='#c62828';
+    el.textContent=v.length>=3?'Code not found':'';
+  } else el.textContent='';
+});
+
+['company','segment','geo','primary','secondary'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',checkForm);
+  document.getElementById(id).addEventListener('change',checkForm);
+});
+function checkForm(){
+  const ok=document.getElementById('segment').value&&document.getElementById('geo').value&&document.getElementById('primary').value&&document.getElementById('secondary').value;
+  document.getElementById('go-btn').disabled=!ok;
+}
+
+// ── TOOLTIP ───────────────────────────────────────────────────────────────────
+const tip=document.getElementById('tip');
+let tipOn=false;
+function showTip(e,fam,mod,c,v){
+  const info=STATUS_INFO[c]||STATUS_INFO.na;
+  document.getElementById('tip-fam').textContent=fam;
+  document.getElementById('tip-mod').textContent=mod;
+  document.getElementById('tip-dot').style.background=info.dotColor;
+  document.getElementById('tip-status').textContent=info.label;
+  let desc=info.desc;
+  if(v&&v!=='—'&&v!=='DF') desc+=`\nPartner / option: ${v}`;
+  document.getElementById('tip-desc').textContent=desc;
+  tipOn=true;tip.style.display='block';moveTip(e);
+}
+function moveTip(e){
+  if(!tipOn)return;
+  const x=e.clientX,y=e.clientY,vw=window.innerWidth,vh=window.innerHeight;
+  const tw=tip.offsetWidth,th=tip.offsetHeight;
+  let l=x+14,t=y+14;
+  if(l+tw>vw-8)l=x-tw-14;
+  if(t+th>vh-8)t=y-th-14;
+  tip.style.left=l+'px';tip.style.top=t+'px';
+}
+document.addEventListener('mousemove',e=>{if(tipOn)moveTip(e)});
+
+// ── ANALYZE ───────────────────────────────────────────────────────────────────
+function analyze(){
+  const company=document.getElementById('company').value.trim();
+  const segment=document.getElementById('segment').value;
+  const geo=document.getElementById('geo').value;
+  const primary=document.getElementById('primary').value;
+  const sub=document.getElementById('secondary').value;
+
+  // Header
+  document.getElementById('r-company').textContent=company||`${sub} Prospect`;
+  const tags=document.getElementById('r-tags');
+  tags.innerHTML=[sub,segment,geo].map(t=>`<span class="result-tag">${t}</span>`).join('');
+
+  // Alerts
+  const alertsDiv=document.getElementById('alerts');alertsDiv.innerHTML='';
+  if(GEO_NOTES[geo])alertsDiv.innerHTML+=`<div class="alert al-geo">${GEO_NOTES[geo]}</div>`;
+  const isNA=segment==='Large Enterprise'||segment==='Enterprise';
+  if(EXCEPTIONS[sub]&&isNA)alertsDiv.innerHTML+=`<div class="alert al-warn"><b>Segment exception:</b> ${EXCEPTIONS[sub]}</div>`;
+
+  // Build family blocks
+  const container=document.getElementById('fam-blocks');
+  container.innerHTML='';
+
+  for(const famName of Object.keys(FAMILY_MODULES)){
+    const modules=FAMILY_MODULES[famName];
+    const famData=(DATA[famName]?.[primary]?.[sub])||{};
+    const color=FAM_COLORS[famName]||'#555';
+
+    // Count statuses for summary dots
+    const counts={dg:0,g:0,y:0,r:0,na:0};
+    for(const mod of modules){
+      const c=(famData[mod]?.c)||'na';
+      counts[c]=(counts[c]||0)+1;
+    }
+
+    // Summary dots (only non-zero, exclude na)
+    let dotsHtml='';
+    for(const [st,cnt] of Object.entries(counts)){
+      if(cnt>0&&st!=='na') dotsHtml+=`<span class="fam-dot ${st}"></span><span class="fam-count">${cnt}</span>`;
+    }
+
+    // Module chips — rows of up to 4 or 5
+    const chipsPerRow = modules.length <= 4 ? modules.length : modules.length <= 6 ? 3 : 4;
+    let chipsHtml='<div class="mod-grid">';
+    for(let i=0;i<modules.length;i+=chipsPerRow){
+      chipsHtml+='<div class="mod-row">';
+      for(let j=i;j<Math.min(i+chipsPerRow,modules.length);j++){
+        const mod=modules[j];
+        const cell=famData[mod]||{v:'—',c:'na'};
+        const c=cell.c;const v=cell.v;
+        const safeV=v.replace(/'/g,"\\'").replace(/"/g,"&quot;");
+        const safeMod=mod.replace(/'/g,"\\'");
+        const safeFam=famName.replace(/'/g,"\\'");
+        chipsHtml+=`<div class="mod-chip ${c}"
+          onmouseenter="showTip(event,'${safeFam}','${safeMod}','${c}','${safeV}')"
+          onmouseleave="tipOn=false;tip.style.display='none'">
+          <div class="mod-chip-name">${mod}</div>
+          <div class="mod-chip-val">${v}</div>
+        </div>`;
+      }
+      chipsHtml+='</div>';
+    }
+    chipsHtml+='</div>';
+
+    const block=document.createElement('div');
+    block.className='fam-block';
+    block.innerHTML=`
+      <div class="fam-header" onclick="toggleFam(this)">
+        <div class="fam-color-bar" style="background:${color}"></div>
+        <span class="fam-name">${famName}</span>
+        <div class="fam-summary">${dotsHtml}</div>
+        <span class="fam-chevron">▼</span>
+      </div>
+      <div class="fam-body">${chipsHtml}</div>`;
+    container.appendChild(block);
+  }
+
+  // Open WFM by default
+  const firstHeader=container.querySelector('.fam-header');
+  if(firstHeader) toggleFam(firstHeader);
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function toggleFam(header){
+  const body=header.nextElementSibling;
+  const chevron=header.querySelector('.fam-chevron');
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  header.classList.toggle('open',!isOpen);
+  chevron.classList.toggle('open',!isOpen);
+}
+</script>
+</body>
+</html>
