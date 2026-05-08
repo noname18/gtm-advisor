@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dayforce GTM Advisor</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f7f6f3;--bg3:#efede8;
+  --text:#1a1a1a;--text2:#5c5c5c;--text3:#999;
+  --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.20);
+  --rad:8px;--radlg:12px;--radxl:16px;
+  --dg-bg:#c8e6c9;--dg-text:#1b5e20;--dg-bdr:#2e7d32;
+  --g-bg:#e8f5e9;--g-text:#2e7d32;--g-bdr:#66bb6a;
+  --y-bg:#fff8e1;--y-text:#f57f17;--y-bdr:#ffca28;
+  --r-bg:#ef5350;--r-text:#ffffff;--r-bdr:#b71c1c;
+  --na-bg:#f5f5f5;--na-text:#9e9e9e;--na-bdr:#e0e0e0;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1a1a18;--bg2:#222220;--bg3:#2a2a27;
+    --text:#f0ede6;--text2:#a8a49c;--text3:#6b6965;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
+    --dg-bg:#1b5e20;--dg-text:#a5d6a7;--dg-bdr:#4caf50;
+    --g-bg:#1b3a1f;--g-text:#81c784;--g-bdr:#388e3c;
+    --y-bg:#3e2c00;--y-text:#ffe082;--y-bdr:#f9a825;
+    --r-bg:#c62828;--r-text:#ffffff;--r-bdr:#b71c1c;
+    --na-bg:#2a2a2a;--na-text:#757575;--na-bdr:#424242;
+  }
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;line-height:1.5;font-size:14px}
+
+nav{background:var(--bg);border-bottom:0.5px solid var(--border2);height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:200}
+.nav-left{display:flex;align-items:center;gap:10px}
+.logo{width:30px;height:30px;background:#111;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.nav-title{font-size:15px;font-weight:600}
+.pill{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:500;border:0.5px solid}
+.pill-mvp{background:var(--y-bg);color:var(--y-text);border-color:var(--y-bdr)}
+.pill-geo{background:var(--g-bg);color:var(--g-text);border-color:var(--g-bdr)}
+
+.wrap{max-width:1020px;margin:0 auto;padding:1.5rem 1.25rem 4rem}
+.card{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radxl);padding:1.5rem;margin-bottom:1rem}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:1rem}
+
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fi{display:flex;flex-direction:column;gap:5px}
+.fi.full{grid-column:1/-1}
+.fi label{font-size:12px;font-weight:500;color:var(--text2)}
+.fi small{font-size:11px;color:var(--text3);margin-top:1px;min-height:16px;display:block}
+input[type=text],select{width:100%;padding:9px 12px;font-size:14px;border:0.5px solid var(--border2);border-radius:var(--rad);background:var(--bg);color:var(--text);outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath fill='%23888' d='M5 7L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:28px}
+.divider{grid-column:1/-1;display:flex;align-items:center;gap:10px}
+.divider span{font-size:11px;color:var(--text3);white-space:nowrap}
+.divider::before,.divider::after{content:'';flex:1;height:0.5px;background:var(--border2)}
+
+.btn{width:100%;margin-top:6px;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:var(--rad);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s}
+.btn:hover{opacity:.85}
+.btn:active{transform:scale(.99)}
+.btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
+
+.alert{padding:10px 14px;border-radius:var(--rad);font-size:13px;margin-bottom:8px;border-left:3px solid;line-height:1.5}
+.al-warn{background:var(--y-bg);color:var(--y-text);border-color:var(--y-bdr)}
+.al-geo{background:var(--na-bg);color:var(--na-text);border-color:var(--na-bdr)}
+
+.rh{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem}
+.rh-title{font-size:19px;font-weight:600}
+.rh-meta{font-size:12px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);padding:3px 12px;border-radius:99px}
+
+/* MATRIX */
+.matrix-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rad);border:0.5px solid var(--border2)}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:700px}
+thead th{padding:6px 8px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);text-align:center;background:var(--bg2);white-space:nowrap;border-bottom:0.5px solid var(--border2)}
+thead th.fam-hd{font-size:11px;font-weight:700;color:var(--text);border-bottom:2px solid var(--border2);border-left:2px solid var(--border2)}
+thead th.row-hd{text-align:left;border-right:0.5px solid var(--border2)}
+thead th.mod-hd{border-left:0.5px solid var(--border);padding:5px 4px;font-size:9px}
+thead th.mod-hd.first{border-left:2px solid var(--border2)}
+tbody tr:hover td{background:var(--bg2)}
+tbody td{padding:4px 3px;border-bottom:0.5px solid var(--border);vertical-align:middle;text-align:center}
+tbody td:last-child{border-right:none}
+tbody td.prim-cell{text-align:left;padding:4px 10px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;border-right:0.5px solid var(--border2);background:var(--bg)}
+tbody td.sub-cell{text-align:left;padding:4px 10px;font-size:13px;font-weight:500;white-space:nowrap;border-right:2px solid var(--border2)}
+tbody td.fam-sep{border-left:2px solid var(--border2)}
+tr:last-child td{border-bottom:none}
+
+.cell{display:inline-flex;align-items:center;justify-content:center;width:52px;height:28px;border-radius:5px;font-size:9px;font-weight:700;cursor:pointer;transition:transform .12s,box-shadow .12s;letter-spacing:.03em;user-select:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.cell:hover{transform:scale(1.12);box-shadow:0 2px 10px rgba(0,0,0,.18);z-index:20;position:relative}
+.dg{background:var(--dg-bg);color:var(--dg-text);border:1.5px solid var(--dg-bdr)}
+.g{background:var(--g-bg);color:var(--g-text);border:1px solid var(--g-bdr)}
+.y{background:var(--y-bg);color:var(--y-text);border:1px solid var(--y-bdr)}
+.r{background:var(--r-bg);color:var(--r-text);border:1px solid var(--r-bdr)}
+.na{background:var(--na-bg);color:var(--na-text);border:1px solid var(--na-bdr);opacity:.55}
+
+/* TOOLTIP */
+.tip{position:fixed;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radlg);padding:11px 14px;font-size:12px;max-width:260px;box-shadow:0 6px 20px rgba(0,0,0,.14);z-index:9999;pointer-events:none;display:none;line-height:1.6}
+.tip-fam{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:2px}
+.tip-mod{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px}
+.tip-status{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;margin-bottom:5px}
+.tip-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.tip-desc{font-size:11px;color:var(--text2);margin-bottom:4px}
+.tip-partner{font-size:11px;color:var(--text2)}
+.tip-partner b{color:var(--text);font-weight:600}
+
+/* LEGEND */
+.leg-grid{display:flex;flex-wrap:wrap;gap:8px 18px}
+.leg-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.leg-swatch{width:32px;height:18px;border-radius:4px;flex-shrink:0}
+.leg-swatch.dg{background:var(--dg-bg);border:1.5px solid var(--dg-bdr)}
+.leg-swatch.g{background:var(--g-bg);border:1px solid var(--g-bdr)}
+.leg-swatch.y{background:var(--y-bg);border:1px solid var(--y-bdr)}
+.leg-swatch.r{background:var(--r-bg);border:1px solid var(--r-bdr)}
+.leg-swatch.na{background:var(--na-bg);border:1px solid var(--na-bdr);opacity:.6}
+
+#results{display:none}
+footer{text-align:center;font-size:11px;color:var(--text3);margin-top:1.5rem}
+
+@media(max-width:600px){.fg{grid-template-columns:1fr}.fi.full{grid-column:1}.pill-geo{display:none}}
+
+.fam-block{margin-bottom:1.25rem}
+.fam-block:last-child{margin-bottom:0}
+.fam-block-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);margin-bottom:6px;padding-left:2px}
+.fam-block .matrix-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rad);border:0.5px solid var(--border2)}
+.fam-block table{width:100%;border-collapse:collapse;font-size:11px}
+.fam-block thead th{padding:6px 8px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);text-align:center;background:var(--bg2);white-space:nowrap;border-bottom:0.5px solid var(--border2)}
+.fam-block tbody td{padding:4px 3px;text-align:center;vertical-align:middle}
+.fam-block tbody tr:hover td{background:var(--bg2)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <div class="logo">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="2" width="6" height="6" rx="1.5" fill="white"/>
+        <rect x="10" y="2" width="6" height="6" rx="1.5" fill="white" fill-opacity=".55"/>
+        <rect x="2" y="10" width="6" height="6" rx="1.5" fill="white" fill-opacity=".55"/>
+        <rect x="10" y="10" width="6" height="6" rx="1.5" fill="white" fill-opacity=".25"/>
+      </svg>
+    </div>
+    <span class="nav-title">Dayforce GTM Advisor</span>
+  </div>
+  <div style="display:flex;gap:6px">
+    <span class="pill pill-geo">North America</span>
+    <span class="pill pill-mvp">MVP · Mock Data</span>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="card">
+    <div class="card-title">Prospect details</div>
+    <div class="fg">
+      <div class="fi full">
+        <label>Company name <span style="font-weight:400;color:var(--text3)">(optional)</span></label>
+        <input type="text" id="company" placeholder="e.g. Acme Corp"/>
+      </div>
+      <div class="fi">
+        <label>Segment <span style="color:var(--r-text)">*</span></label>
+        <select id="segment">
+          <option value="">Select segment</option>
+          <option>Large Enterprise</option><option>Enterprise</option>
+          <option>Majors</option><option>Emerging</option><option>CA SMB</option>
+        </select>
+      </div>
+      <div class="fi">
+        <label>Geography <span style="color:var(--r-text)">*</span></label>
+        <select id="geo">
+          <option value="">Select geography</option>
+          <option value="US">US</option><option value="Canada">Canada</option>
+          <option value="EMEA">EMEA</option><option value="APJ">APJ</option>
+        </select>
+      </div>
+      <div class="fi">
+        <label>Primary vertical <span style="color:var(--r-text)">*</span></label>
+        <select id="primary">
+          <option value="">Select vertical</option>
+          <option>Retail</option><option>Manufacturing</option><option>Healthcare</option>
+          <option>Public Sector</option><option>Services</option><option>Financial Services</option>
+        </select>
+      </div>
+      <div class="fi">
+        <label>Sub-vertical <span style="color:var(--r-text)">*</span></label>
+        <select id="secondary" disabled><option value="">Select primary first</option></select>
+      </div>
+      <div class="divider"><span>or look up by NAICS code</span></div>
+      <div class="fi full">
+        <label>NAICS code</label>
+        <input type="text" id="naics" placeholder="e.g. 622, 441, 523, 722" maxlength="10"/>
+        <small id="naics-msg"></small>
+      </div>
+    </div>
+    <button class="btn" id="go-btn" onclick="analyze()" disabled>Generate recommendations</button>
+  </div>
+
+  <div class="card" style="padding:1.1rem 1.5rem">
+    <div class="card-title">Legend — hover any cell for details</div>
+    <div class="leg-grid">
+      <div class="leg-item"><span class="leg-swatch dg"></span><span><b>DF differentiated</b> — best-in-class, strong competitive advantage</span></div>
+      <div class="leg-item"><span class="leg-swatch g"></span><span><b>DF market-appropriate</b> — solid fit, meets segment needs</span></div>
+      <div class="leg-item"><span class="leg-swatch y"></span><span><b>DF with gap</b> — functional gaps, sell with caution</span></div>
+      <div class="leg-item"><span class="leg-swatch r"></span><span><b>Do not sell / Partner only</b> — no ACV, partner leads</span></div>
+      <div class="leg-item"><span class="leg-swatch na"></span><span><b>N/A</b> — not applicable for this vertical</span></div>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div id="alerts"></div>
+      <div class="rh">
+        <div class="rh-title" id="r-title"></div>
+        <span class="rh-meta" id="r-meta"></span>
+      </div>
+      <div id="fam-output"></div>
+      <p style="font-size:11px;color:var(--text3);margin-top:12px;text-align:right">Hover any cell for details</p>
+    </div>
+  </div>
+
+  <footer>Dayforce GTM Advisor · MVP · North America mock data · Internal sales use only</footer>
+</div>
+
+<div class="tip" id="tip">
+  <div class="tip-fam" id="tip-fam"></div>
+  <div class="tip-mod" id="tip-mod"></div>
+  <div class="tip-status"><span class="tip-dot" id="tip-dot"></span><span id="tip-status"></span></div>
+  <div class="tip-desc" id="tip-desc"></div>
+  <div class="tip-partner" id="tip-partner"></div>
+</div>
+
+<script>
+const NAICS={"521":{"p":"Financial Services","s":"Banking/Payments"},"522":{"p":"Financial Services","s":"Banking/Payments"},"523":{"p":"Financial Services","s":"Asset Managers"},"524":{"p":"Financial Services","s":"Insurance"},"525":{"p":"Financial Services","s":"Funds/Trusts"},"621A":{"p":"Healthcare","s":"Independent Clinic"},"6216":{"p":"Healthcare","s":"Extended Care"},"6215":{"p":"Healthcare","s":"H.Care IT & Services"},"6219":{"p":"Healthcare","s":"Independent Clinic"},"6214":{"p":"Healthcare","s":"Independent Clinic"},"622":{"p":"Healthcare","s":"Hospital & Nursing"},"623":{"p":"Healthcare","s":"Hospital & Nursing"},"624":{"p":"Healthcare","s":"Extended Care"},"31A":{"p":"Manufacturing","s":"Food/CPG"},"31B":{"p":"Manufacturing","s":"Chemical/Metals"},"32":{"p":"Manufacturing","s":"Chemical/Metals"},"33A":{"p":"Manufacturing","s":"Chemical/Metals"},"333":{"p":"Manufacturing","s":"Transport/Machinery"},"334":{"p":"Manufacturing","s":"Tech/Electronics"},"335":{"p":"Manufacturing","s":"Food/CPG"},"336":{"p":"Manufacturing","s":"Transport/Machinery"},"337":{"p":"Manufacturing","s":"Food/CPG"},"339":{"p":"Manufacturing","s":"Food/CPG"},"11":{"p":"Services","s":"Mining, Oil, Gas"},"21":{"p":"Services","s":"Mining, Oil, Gas"},"236":{"p":"Services","s":"Construction"},"237":{"p":"Services","s":"Construction"},"238":{"p":"Services","s":"Construction"},"332":{"p":"Manufacturing","s":"Chemical/Metals"},"423":{"p":"Retail","s":"Specialty Retail"},"424":{"p":"Retail","s":"Specialty Retail"},"4244":{"p":"Retail","s":"Big Box / Grocery"},"425":{"p":"Retail","s":"Specialty Retail"},"441":{"p":"Retail","s":"Specialty Retail"},"444":{"p":"Retail","s":"Specialty Retail"},"4451":{"p":"Retail","s":"Big Box / Grocery"},"4452":{"p":"Retail","s":"Big Box / Grocery"},"4453":{"p":"Retail","s":"Big Box / Grocery"},"449":{"p":"Retail","s":"Specialty Retail"},"455":{"p":"Retail","s":"Specialty Retail"},"4561":{"p":"Retail","s":"Specialty Retail"},"457":{"p":"Retail","s":"Specialty Retail"},"458":{"p":"Retail","s":"Specialty Retail"},"485":{"p":"Public Sector","s":"Local/Municipal"},"4911":{"p":"Public Sector","s":"Federal/Central Govt"},"512":{"p":"Services","s":"Information Services"},"513":{"p":"Services","s":"Information Services"},"516":{"p":"Services","s":"Information Services"},"517":{"p":"Services","s":"Information Services"},"518":{"p":"Services","s":"Information Services"},"519":{"p":"Services","s":"Information Services"},"521a":{"p":"Financial Services","s":"Banking/Payments"},"53":{"p":"Services","s":"Real Estate Services"},"531":{"p":"Services","s":"Real Estate Services"},"541":{"p":"Services","s":"Professional Services"},"55":{"p":"Services","s":"Professional Services"},"56":{"p":"Services","s":"Field Services"},"561":{"p":"Services","s":"Field Services"},"562":{"p":"Services","s":"Field Services"},"611":{"p":"Public Sector","s":"Education"},"711":{"p":"Retail","s":"Sporting & Entertainment"},"712":{"p":"Retail","s":"Amusement Parks"},"713":{"p":"Retail","s":"Amusement Parks"},"721":{"p":"Retail","s":"Accommodations"},"722":{"p":"Retail","s":"Restaurants (FSR)"},"81":{"p":"Financial Services","s":"Not For Profit"},"812":{"p":"Financial Services","s":"Not For Profit"},"921":{"p":"Public Sector","s":"Local/Municipal"},"922":{"p":"Public Sector","s":"Federal/Central Govt"},"923":{"p":"Public Sector","s":"Special Districts"},"924":{"p":"Public Sector","s":"Special Districts"},"925":{"p":"Public Sector","s":"Special Districts"},"926":{"p":"Public Sector","s":"Special Districts"},"927":{"p":"Public Sector","s":"Federal/Central Govt"},"928":{"p":"Public Sector","s":"Federal/Central Govt"}};
+
+const SUBS={"Retail":["Big Box / Grocery","Specialty Retail","Accommodations","Sporting & Entertainment","Amusement Parks","Casinos","Restaurants (FSR)","Restaurants (QSR)"],"Manufacturing":["Chemical/Metals","Food/CPG","Tech/Electronics","Transport/Machinery","Defense","Warehousing"],"Healthcare":["Extended Care","Hospital & Nursing","H.Care IT & Services","Independent Clinic","Life Sciences","Long Term Care","Veterinary","Home Healthcare"],"Public Sector":["Education","Federal/Central Govt","Local/Municipal","Special Districts","Dispatch"],"Services":["Construction","Field Services","Logistics","Mining, Oil, Gas","Information Services","Professional Services","Real Estate Services","Call Centres"],"Financial Services":["Banking/Payments","Asset Managers","Funds/Trusts","Insurance","Not For Profit"]};
+
+const FAMILIES=[
+  {name:"WFM",modules:["Budget","Forecast","Labor Opt","Schedule","Time Entry","Absence Mgmt","Mobile Eng","Frontline Comms","Task Mgmt"]},
+  {name:"HR",modules:["People Analytics","Copilot","Doc Mgmt","Knowledge Mgmt"]},
+  {name:"Payroll",modules:["ACA","Payroll","Pension Auto"]},
+  {name:"Talent",modules:["Recruiting","Succession","Compensation","Onboarding","Performance","Learning","Engagement","Career Explorer"]},
+  {name:"Benefits",modules:["Benefits","Benefits Billing","Benefits Intel"]},
+  {name:"Managed",modules:["Mgd Garnishments","CC - Pay","CC - Benefits","CC - Garnishments"]}
+];
+
+const PARTNERS={WFM:["Logile","Ubeya","Konami","Fourth","7Shifts","Quinyx","Indeavor","Vonage","iTempus"],HR:["Visier","Glint","Workday","ServiceNow","Medallia"],Payroll:["ADP","Ceridian","Paychex","Gusto"],Talent:["Greenhouse","Lever","Cornerstone","SumTotal","Degreed","Saba"],Benefits:["Benefitfocus","bswift","Businessolver","Ease"],Managed:["ADP","Conduent","Alight","WEX"]};
+
+const STATUS_INFO={
+  dg:{label:"DF differentiated",desc:"Dayforce has a best-in-class, differentiated product — strong competitive advantage in this vertical",color:"#2e7d32"},
+  g:{label:"DF market-appropriate",desc:"Dayforce has a solid, market-appropriate product that meets segment needs",color:"#388e3c"},
+  y:{label:"DF with gap",desc:"Dayforce product has some functional gaps in this vertical — sell with caution and set correct expectations",color:"#f57f17"},
+  r:{label:"Do not sell / Partner only",desc:"Dayforce does not get ACV here. Product may not be viable or partner leads this space entirely",color:"#b71c1c"},
+  na:{label:"Not applicable",desc:"This module is not relevant or available for this vertical",color:"#9e9e9e"}
+};
+
+const GEO_NOTES={Canada:"Showing North America recommendations. Canada-specific exceptions may apply — verify with your regional lead.",EMEA:"This MVP uses North America data only. EMEA-specific guidance not yet loaded — check with your EMEA team.",APJ:"This MVP uses North America data only. APJ-specific guidance not yet loaded — check with your APJ team."};
+
+const EXCEPTIONS={"Big Box / Grocery":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Food/CPG":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Tech/Electronics":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Transport/Machinery":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Defense":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Warehousing":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Extended Care":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Hospital & Nursing":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management. Full shift scheduling gap noted.","H.Care IT & Services":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Independent Clinic":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Life Sciences":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Long Term Care":"For NA Enterprise/Mid-Market: do not use Partner except for Task Management","Veterinary":"Profile configuration gap identified — verify before committing"};
+
+// WFM real data
+const WFM_REAL={"Retail":{"Big Box / Grocery":{Budget:'y',Forecast:'y',"Labor Opt":'y',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'g'},"Specialty Retail":{Budget:'y',Forecast:'y',"Labor Opt":'y',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'g'},"Accommodations":{Budget:'y',Forecast:'y',"Labor Opt":'y',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'g'},"Sporting & Entertainment":{Budget:'y',Forecast:'y',"Labor Opt":'y',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'g'},"Amusement Parks":{Budget:'y',Forecast:'y',"Labor Opt":'y',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'g'},"Casinos":{Budget:'y',Forecast:'y',"Labor Opt":'y',Schedule:'r',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'g'},"Restaurants (FSR)":{Budget:'y',Forecast:'y',"Labor Opt":'y',Schedule:'y',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'g'},"Restaurants (QSR)":{Budget:'y',Forecast:'y',"Labor Opt":'y',Schedule:'y',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'g'}},"Manufacturing":{"Chemical/Metals":{Budget:'na',Forecast:'na',"Labor Opt":'y',Schedule:'g',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Food/CPG":{Budget:'na',Forecast:'na',"Labor Opt":'y',Schedule:'g',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Tech/Electronics":{Budget:'na',Forecast:'r',"Labor Opt":'y',Schedule:'g',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Transport/Machinery":{Budget:'na',Forecast:'r',"Labor Opt":'y',Schedule:'g',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Defense":{Budget:'na',Forecast:'r',"Labor Opt":'y',Schedule:'g',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Warehousing":{Budget:'na',Forecast:'y',"Labor Opt":'y',Schedule:'g',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'}},"Healthcare":{"Extended Care":{Budget:'r',Forecast:'r',"Labor Opt":'r',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Hospital & Nursing":{Budget:'r',Forecast:'r',"Labor Opt":'r',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"H.Care IT & Services":{Budget:'r',Forecast:'y',"Labor Opt":'y',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Independent Clinic":{Budget:'r',Forecast:'y',"Labor Opt":'y',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Life Sciences":{Budget:'r',Forecast:'y',"Labor Opt":'y',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Long Term Care":{Budget:'r',Forecast:'g',"Labor Opt":'g',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Veterinary":{Budget:'r',Forecast:'g',"Labor Opt":'g',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Home Healthcare":{Budget:'r',Forecast:'r',"Labor Opt":'r',Schedule:'y',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'y',"Frontline Comms":'y',"Task Mgmt":'r'}},"Public Sector":{"Education":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'na'},"Federal/Central Govt":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'na'},"Local/Municipal":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'na'},"Special Districts":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'na'},"Dispatch":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'y',"Time Entry":'y',"Absence Mgmt":'y',"Mobile Eng":'y',"Frontline Comms":'y',"Task Mgmt":'na'}},"Services":{"Construction":{Budget:'na',Forecast:'na',"Labor Opt":'y',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Field Services":{Budget:'na',Forecast:'na',"Labor Opt":'y',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Logistics":{Budget:'na',Forecast:'na',"Labor Opt":'y',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Mining, Oil, Gas":{Budget:'na',Forecast:'na',"Labor Opt":'y',Schedule:'y',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'r'},"Information Services":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'na'},"Professional Services":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'na'},"Real Estate Services":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'na'},"Call Centres":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'y',"Absence Mgmt":'g',"Mobile Eng":'g',"Frontline Comms":'y',"Task Mgmt":'na'}},"Financial Services":{"Banking/Payments":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'y',"Frontline Comms":'r',"Task Mgmt":'na'},"Asset Managers":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'y',"Frontline Comms":'na',"Task Mgmt":'na'},"Funds/Trusts":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'y',"Frontline Comms":'na',"Task Mgmt":'na'},"Insurance":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'y',"Frontline Comms":'na',"Task Mgmt":'na'},"Not For Profit":{Budget:'na',Forecast:'na',"Labor Opt":'na',Schedule:'g',"Time Entry":'g',"Absence Mgmt":'g',"Mobile Eng":'y',"Frontline Comms":'na',"Task Mgmt":'na'}}};
+
+function seededRng(seed){let s=seed;return()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff}}
+
+const BIAS={HR:{dg:.15,g:.40,y:.20,r:.08,na:.17},Payroll:{dg:.30,g:.40,y:.15,r:.05,na:.10},Talent:{dg:.10,g:.30,y:.25,r:.10,na:.25},Benefits:{dg:.20,g:.35,y:.20,r:.10,na:.15},Managed:{dg:.15,g:.25,y:.20,r:.15,na:.25}};
+
+function pickSt(rng,fam){
+  const b=BIAS[fam]||{dg:.2,g:.4,y:.2,r:.1,na:.1};
+  const rv=rng();let acc=0;
+  for(const[k,v]of Object.entries(b)){acc+=v;if(rv<acc)return k}
+  return 'g';
+}
+
+function genData(primary,sub){
+  const seed=(primary+sub).split('').reduce((a,c)=>a+c.charCodeAt(0),0)*1009;
+  const res={};
+  for(const fam of FAMILIES){
+    if(fam.name==='WFM'){
+      res.WFM={};
+      const wfmRow=WFM_REAL[primary]?.[sub];
+      const plist=PARTNERS.WFM;
+      const rng=seededRng(seed+999);
+      for(const mod of fam.modules){
+        const st=wfmRow?.[mod]||'g';
+        const partner=(['y','r'].includes(st))?plist[Math.floor(rng()*plist.length)]:null;
+        const confirmed=partner?(rng()>.5?'C':'NC'):null;
+        res.WFM[mod]={status:st,partner,confirmed};
+      }
+    } else {
+      res[fam.name]={};
+      const plist=PARTNERS[fam.name]||PARTNERS.WFM;
+      for(const mod of fam.modules){
+        const mseed=(fam.name+mod+primary+sub).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+        const rng=seededRng(seed^(mseed*31));
+        const st=pickSt(rng,fam.name);
+        const partner=(['y','r'].includes(st))?plist[Math.floor(rng()*plist.length)]:null;
+        const confirmed=partner?(rng()>.5?'C':'NC'):null;
+        res[fam.name][mod]={status:st,partner,confirmed};
+      }
+    }
+  }
+  return res;
+}
+
+// ── FORM ──
+document.getElementById('primary').addEventListener('change',function(){
+  const sec=document.getElementById('secondary');
+  const subs=SUBS[this.value]||[];
+  sec.innerHTML=subs.length?'<option value="">Select sub-vertical</option>'+subs.map(s=>`<option>${s}</option>`).join(''):'<option value="">—</option>';
+  sec.disabled=!subs.length;
+  checkForm();
+});
+
+document.getElementById('naics').addEventListener('input',function(){
+  const v=this.value.trim();
+  const m=NAICS[v];
+  const el=document.getElementById('naics-msg');
+  if(m){
+    el.style.color='var(--g-text)';
+    el.textContent=`→ ${m.p} · ${m.s}`;
+    const pEl=document.getElementById('primary');
+    pEl.value=m.p;pEl.dispatchEvent(new Event('change'));
+    setTimeout(()=>{
+      const sEl=document.getElementById('secondary');
+      for(let i=0;i<sEl.options.length;i++){
+        if(sEl.options[i].text.toLowerCase().replace(/[^a-z]/g,'').includes(m.s.toLowerCase().replace(/[^a-z]/g,'').substring(0,6))||
+           m.s.toLowerCase().includes(sEl.options[i].text.toLowerCase().replace(/\s/g,'').substring(0,6))){
+          sEl.value=sEl.options[i].value;break;
+        }
+      }
+      checkForm();
+    },60);
+  } else if(v.length>=2){
+    el.style.color='var(--r-text)';
+    el.textContent=v.length>=3?'NAICS code not found in database':'';
+  } else el.textContent='';
+});
+
+['company','segment','geo','primary','secondary'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',checkForm);
+  document.getElementById(id).addEventListener('change',checkForm);
+});
+
+function checkForm(){
+  const ok=document.getElementById('segment').value&&document.getElementById('geo').value&&document.getElementById('primary').value&&document.getElementById('secondary').value;
+  document.getElementById('go-btn').disabled=!ok;
+}
+
+// ── TOOLTIP ──
+const tip=document.getElementById('tip');
+let tipVisible=false;
+function showTip(e,fam,mod,st,partner,confirmed){
+  const info=STATUS_INFO[st]||STATUS_INFO.na;
+  document.getElementById('tip-fam').textContent=fam;
+  document.getElementById('tip-mod').textContent=mod;
+  document.getElementById('tip-dot').style.background=info.color;
+  document.getElementById('tip-status').textContent=info.label;
+  document.getElementById('tip-desc').textContent=info.desc;
+  const pEl=document.getElementById('tip-partner');
+  pEl.innerHTML=partner?`Partner: <b>${partner}${confirmed?' ('+confirmed+')':''}</b>`:'';
+  tipVisible=true;tip.style.display='block';posTip(e);
+}
+function posTip(e){
+  if(!tipVisible)return;
+  const x=e.clientX,y=e.clientY,tw=tip.offsetWidth,th=tip.offsetHeight,vw=window.innerWidth,vh=window.innerHeight;
+  let l=x+14,t=y+14;
+  if(l+tw>vw-8)l=x-tw-14;
+  if(t+th>vh-8)t=y-th-14;
+  tip.style.left=l+'px';tip.style.top=t+'px';
+}
+document.addEventListener('mousemove',e=>{if(tipVisible)posTip(e)});
+
+// ── ANALYZE ──
+function analyze(){
+  const company=document.getElementById('company').value.trim();
+  const segment=document.getElementById('segment').value;
+  const geo=document.getElementById('geo').value;
+  const primary=document.getElementById('primary').value;
+  const sub=document.getElementById('secondary').value;
+  const data=genData(primary,sub);
+
+  document.getElementById('r-title').textContent=company||`${sub} Prospect`;
+  document.getElementById('r-meta').textContent=`${sub} · ${segment} · ${geo}`;
+
+  const alertsDiv=document.getElementById('alerts');alertsDiv.innerHTML='';
+  if(GEO_NOTES[geo])alertsDiv.innerHTML+=`<div class="alert al-geo">${GEO_NOTES[geo]}</div>`;
+  if(EXCEPTIONS[sub]&&(segment==='Large Enterprise'||segment==='Enterprise'))
+    alertsDiv.innerHTML+=`<div class="alert al-warn"><b>Segment exception:</b> ${EXCEPTIONS[sub]}</div>`;
+
+  // Build one table per family, stacked vertically
+  let html='';
+  for(const fam of FAMILIES){
+    // header row: module names
+    let thead='<thead><tr>';
+    fam.modules.forEach(mod=>{
+      thead+=`<th class="mod-hd">${mod}</th>`;
+    });
+    thead+='</tr></thead>';
+
+    // single data row: colored cells
+    let tbody='<tbody><tr>';
+    fam.modules.forEach(mod=>{
+      const cell=data[fam.name]?.[mod]||{status:'na',partner:null,confirmed:null};
+      const st=cell.status;
+      const lbl=st==='na'?'—':cell.partner?`D/${cell.partner.split(' ')[0]}`:'DF';
+      tbody+=`<td><div class="cell ${st}"
+        onmouseenter="showTip(event,'${fam.name}','${mod}','${st}',${cell.partner?`'${cell.partner}'`:'null'},${cell.confirmed?`'${cell.confirmed}'`:'null'})"
+        onmouseleave="tipVisible=false;tip.style.display='none'"
+      >${lbl}</div></td>`;
+    });
+    tbody+='</tr></tbody>';
+
+    html+=`<div class="fam-block">
+      <div class="fam-block-title">${fam.name}</div>
+      <div class="matrix-wrap"><table>${thead}${tbody}</table></div>
+    </div>`;
+  }
+
+  document.getElementById('fam-output').innerHTML=html;
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
